@@ -1,0 +1,34 @@
+@CHARSET "UTF-8";
+
+th {
+	background:steelblue;
+}
+
+#list {
+	float: left;
+	width: 35%;
+}
+
+#detail {
+	float: left;
+	width: 35%;
+}
+
+#login {
+	float: left;
+	width: 30%;
+}
+
+#insertBlock {
+	margin: 5px 0px
+}
+
+div .error {
+	color: red;
+}
+
+.clearfix::after {
+	content: "";
+	display: block;
+	clear: both;
+}
