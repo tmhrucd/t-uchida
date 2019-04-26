@@ -63,6 +63,20 @@ public class EmployeeResource {
 	}
 
 	/**
+	 * EMPID指定で従業員情報を取得する。
+	 *
+	 * @param empId 取得対象の従業員のEMPID
+	 * @return 取得した従業員情報をJSON形式で返す。データが存在しない場合は空のオブジェクトが返る。
+	 */
+	@GET
+	@Path("emp/{empId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Employee findByEMPId(@PathParam("empId") String empId) {
+		return empDao.findByEmpId(empId);
+	}
+
+
+	/**
 	 * クエリパラメータ指定による検索を実施する。
 	 * 何も指定しない場合は全件検索になる。
 	 *

@@ -24,6 +24,7 @@ public class EmployeeDAO {
 							+"INNER JOIN POST POST "
 							+"ON EMP.POSTID = POST.ID";
 	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.ID = ?";
+
 	private static final String INSERT_QUERY = "INSERT INTO "
 							+"EMPLOYEE(EMPID, NAME, AGE, GENDER, PHOTOID, ZIP, PREF, ADDRESS, POSTID, ENTDATE, RETDATE) "
 							+"VALUES(?,?,?,?,?,?,?,?,?,?,?)";
@@ -31,6 +32,9 @@ public class EmployeeDAO {
 							+"SET EMPID=?,NAME=?,AGE=?,GENDER=?,PHOTOID=?,ZIP=?,PREF=?,"
 							+"ADDRESS=?,POSTID=?,ENTDATE=?,RETDATE=? WHERE ID = ?";
 	private static final String DELETE_QUERY = "DELETE FROM EMPLOYEE WHERE ID = ?";
+
+	/**追加分*/
+	private static final String SELECT_BY_EMPID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.EMPID = ?";
 
 	/**
 	 * ID指定の検索を実施する。
@@ -62,6 +66,38 @@ public class EmployeeDAO {
 
 		return result;
 	}
+
+	/**
+	 * EMPID指定の検索を実施する。
+	 *
+	 * @param empId 検索対象のEMPID
+	 * @return 検索できた場合は検索結果データを収めたPostインスタンス。検索に失敗した場合はnullが返る。
+	 */
+	public Employee findByEmpId(String empId) {
+		Employee result = null;
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return result;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.next()) {
+				result = processRow(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return result;
+	}
+
 
 	/**
 	 * パラメータ指定の検索を実施する。

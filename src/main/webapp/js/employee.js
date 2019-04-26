@@ -243,13 +243,13 @@ function login(){
 
 	console.log('login start');
 
-	var logId = $('#loginId').val();
+	var empId = $('#loginId').val();
 	var logPass = $('#loginPass').val();
 
-	console.log(logId+'  '+logPass);
+	console.log('社員ID='+empId+' パスワード='+logPass);
 
 	$.ajax({
-		url : rootUrl + '/' +logId,
+		url : rootUrl + '/emp/' +empId,
 		type : "GET",
 		dataType : "json",
 		async : false,
