@@ -174,6 +174,8 @@ public class Employee {
         sb.append(",");
         sb.append(this.getPhotoId());
         sb.append(",");
+        sb.append(this.getPassword());
+        sb.append(",");
         String s = this.getZip();
         sb.append(s != null ? s : "");
         sb.append(",");

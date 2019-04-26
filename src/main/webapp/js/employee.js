@@ -246,8 +246,6 @@ function login(){
 	var logId = $('#loginId').val();
 	var logPass = $('#loginPass').val();
 
-	var query ={logPass : logPass};
-
 	console.log(logId+'  '+logPass);
 
 	$.ajax({
@@ -257,31 +255,26 @@ function login(){
 		async : false,
 		success : function(json) {
 
+			//IDで検索できなかった
 			if(json == null){
-
-				alert('アカウントないよ');
-
+				alert('指定されたIDの社員はいませんでした');
 			}
-
+			//社員はいた
 			else{
 
-				alert('アカウントあるよ');
-
-				if(json[0].pass ==logPass)
+				//パスワードがあっている
+				if(json.password == logPass)
 				{
-
-					alert('ログインできたよ');
-
+					alert('ログインできました');
+				}else{
+					alert('パスワードが違います');
 				}
-
-
-
 			}
 
 
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
-			alert('アカウントないよ');
+			alert('通信に失敗しました。');
 		}
 	})
 
