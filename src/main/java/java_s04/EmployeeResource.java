@@ -1,9 +1,13 @@
 package java_s04;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -43,10 +48,80 @@ public class EmployeeResource {
 	private final PhotoDAO photoDao = new PhotoDAO();
 
 
-	/**
-	 * IDとパスでログイン判定
-	 *
-	 */
+
+	/**ログイン処理
+	 * @throws IOException **/
+	@GET
+	@Path("login/{empId}/{logPass}")
+	@Produces("text/plain")
+	public String login(@Context HttpServletRequest request , @Context HttpServletResponse response , @PathParam("empId") String empId , @PathParam("logPass") String logPass) throws IOException {
+
+		Employee emp = empDao.findByEmpId(empId);
+
+		String str="";
+
+		String Pass = "";
+
+		//IDで検索できなかった
+		if(emp == null){
+			str = "指定されたIDの社員は登録されていません";
+		}
+		//社員はいた
+		else{
+
+			Pass = empDao.getPassByEmpId(empId);
+
+			//パスワードがあっている
+			if(Pass.equals(logPass))
+			{
+				str = "ログインしました";
+
+				/**権限ID取得**/
+				String authId = empDao.getAuthByEmpId(empId);
+
+				/**セッション発行**/
+				HttpSession session = request.getSession(true);
+
+				//10分間
+				session.setMaxInactiveInterval(1*60);
+
+				//社員ID格納
+				session.setAttribute("empId", empId);
+
+				//権限ID格納
+				session.setAttribute("authId", authId);
+
+				System.out.println("セッション開始できたよ");
+
+				// アクセスした人に応答する
+				//PrintWriter pw = response.getWriter();
+
+			}else{
+				str = "パスワードが間違っています";
+			}
+		}
+
+		return str;
+	}
+
+
+	@GET
+	@Path("session")
+	@Produces("text/plain")
+	public String session(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+				/**セッション取得**/
+				HttpSession session = request.getSession(false);
+
+				String SessionInf = "社員ID="+(String)session.getAttribute("empId");
+
+				SessionInf += " 権限ID="+(String)session.getAttribute("authId");
+
+
+		return SessionInf;
+	}
+
 
 
 	/**

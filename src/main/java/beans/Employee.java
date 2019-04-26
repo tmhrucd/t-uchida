@@ -29,7 +29,14 @@ public class Employee {
 	private String enterDate;
 	private String retireDate;
 	private String password;
+	private int authId;
 
+	public int getAuthId() {
+		return authId;
+	}
+	public void setAuthId(int authId) {
+		this.authId = authId;
+	}
 	public String getPassword() {
 		return password;
 	}

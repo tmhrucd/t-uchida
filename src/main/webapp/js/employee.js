@@ -237,6 +237,7 @@ function makePostSelection(selectionId, employee) {
 	});
 }
 
+
 $('#login-button').click(login);
 
 function login(){
@@ -249,36 +250,36 @@ function login(){
 	console.log('社員ID='+empId+' パスワード='+logPass);
 
 	$.ajax({
-		url : rootUrl + '/emp/' +empId,
+		url : rootUrl + '/login/' +empId+ '/'+logPass,
 		type : "GET",
-		dataType : "json",
 		async : false,
-		success : function(json) {
-
-			//IDで検索できなかった
-			if(json == null){
-				alert('指定されたIDの社員はいませんでした');
-			}
-			//社員はいた
-			else{
-
-				//パスワードがあっている
-				if(json.password == logPass)
-				{
-					alert('ログインできました');
-				}else{
-					alert('パスワードが違います');
-				}
-			}
-
-
+		success : function(data) {
+			alert(data);
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('通信に失敗しました。');
 		}
 	})
 
-
 }
 
+
+$('#session-button').click(checkSession);
+
+function checkSession(){
+
+	console.log('checkSession start');
+
+	$.ajax({
+		url : rootUrl + '/session',
+		type : "GET",
+		async : false,
+		success : function(data) {
+			alert(data);
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('通信に失敗しました。');
+		}
+	})
+}
 

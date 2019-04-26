@@ -19,7 +19,7 @@ public class EmployeeDAO {
 	 * クエリ文字列
 	 */
 	private static final String SELECT_ALL_QUERY = "SELECT EMP.ID AS ID, EMP.EMPID, EMP.NAME, EMP.AGE, EMP.GENDER, EMP.PHOTOID, EMP.ZIP, EMP.PREF, EMP.ADDRESS, "
-							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE, EMP.PASSWORD "
+							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE, EMP.PASSWORD ,EMP.AUTH_ID "
 							+"FROM EMPLOYEE EMP "
 							+"INNER JOIN POST POST "
 							+"ON EMP.POSTID = POST.ID";
@@ -97,6 +97,61 @@ public class EmployeeDAO {
 
 		return result;
 	}
+
+
+	/**社員IDからパスワードを返す**/
+	public String getPassByEmpId(String empId){
+
+		String Pass = "";
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return Pass;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			rs.next();
+			Pass = rs.getString("PASSWORD");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return Pass;
+	}
+
+
+	/**社員IDから権限IDを返す**/
+	public String getAuthByEmpId(String empId){
+
+		String Auth = "";
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return Auth;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			rs.next();
+			Auth = rs.getString("AUTH_ID");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return Auth;
+	}
+
 
 
 	/**
@@ -234,7 +289,8 @@ public class EmployeeDAO {
 		result.setZip(rs.getString("ZIP"));
 		result.setPref(rs.getString("PREF"));
 		result.setAddress(rs.getString("ADDRESS"));
-		result.setPassword(rs.getString("PASSWORD"));
+		result.setAuthId(rs.getInt("AUTH_ID"));
+
 		Date entDate = rs.getDate("ENTDATE");
 		if (entDate != null) {
 			result.setEnterDate(entDate.toString());
