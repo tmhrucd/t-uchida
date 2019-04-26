@@ -51,10 +51,10 @@ public class EmployeeResource {
 
 	/**ログイン処理
 	 * @throws IOException **/
-	@GET
-	@Path("login/{empId}/{logPass}")
+	@POST
+	@Path("login")
 	@Produces("text/plain")
-	public String login(@Context HttpServletRequest request , @Context HttpServletResponse response , @PathParam("empId") String empId , @PathParam("logPass") String logPass) throws IOException {
+	public String login(@Context HttpServletRequest request , @Context HttpServletResponse response , @QueryParam("empId") String empId , @QueryParam("logPass") String logPass) throws IOException {
 
 		Employee emp = empDao.findByEmpId(empId);
 
@@ -93,13 +93,29 @@ public class EmployeeResource {
 
 				System.out.println("セッション開始できたよ");
 
-				// アクセスした人に応答する
-				//PrintWriter pw = response.getWriter();
-
 			}else{
 				str = "パスワードが間違っています";
 			}
 		}
+
+		return str;
+	}
+
+	/**アウト処理
+	 * @throws IOException **/
+	@POST
+	@Path("logout")
+	@Produces("text/plain")
+	public String logout(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+		/**セッション発行**/
+		HttpSession session = request.getSession(true);
+
+		/**セッション破棄**/
+		session.invalidate();
+
+		String str ="ok";
 
 		return str;
 	}
@@ -114,10 +130,11 @@ public class EmployeeResource {
 				/**セッション取得**/
 				HttpSession session = request.getSession(false);
 
-				String SessionInf = "社員ID="+(String)session.getAttribute("empId");
+				String SessionInf = (String)session.getAttribute("empId");
 
-				SessionInf += " 権限ID="+(String)session.getAttribute("authId");
+				Employee emp = empDao.findByEmpId(SessionInf);
 
+				SessionInf = emp.getName();
 
 		return SessionInf;
 	}

@@ -6,6 +6,8 @@ var getPhotoUrl = "/java_s04/api/v1.1/photos";
 
 initPage();
 
+checkSession();
+
 $('#saveEmployee').click(function() {
 	$('.error').children().remove();
 	if ($('#name').val() === '') {
@@ -240,6 +242,7 @@ function makePostSelection(selectionId, employee) {
 
 $('#login-button').click(login);
 
+/**ログインするファンクション**/
 function login(){
 
 	console.log('login start');
@@ -247,14 +250,42 @@ function login(){
 	var empId = $('#loginId').val();
 	var logPass = $('#loginPass').val();
 
+	var urlWithParam = rootUrl+'/login?empId='+empId+'&logPass='+logPass;
+
 	console.log('社員ID='+empId+' パスワード='+logPass);
 
 	$.ajax({
-		url : rootUrl + '/login/' +empId+ '/'+logPass,
-		type : "GET",
+		url : urlWithParam,
+		type : "POST",
 		async : false,
 		success : function(data) {
+
 			alert(data);
+
+			location.reload();
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('通信に失敗しました。');
+		}
+	})
+
+}
+$('#logout').click(logout);
+
+/**ログアウトするファンクション**/
+function logout(){
+
+	console.log('logout start');
+
+	$.ajax({
+		url : rootUrl + '/logout' ,
+		type : "POST",
+		async : false,
+		success : function() {
+			alert('ログアウトしました')
+
+			location.reload();
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('通信に失敗しました。');
@@ -264,7 +295,6 @@ function login(){
 }
 
 
-$('#session-button').click(checkSession);
 
 function checkSession(){
 
@@ -275,10 +305,15 @@ function checkSession(){
 		type : "GET",
 		async : false,
 		success : function(data) {
-			alert(data);
+
+			$('#login').append('<p>「'+data+'」でログインしています</p>');
+			$('#login').append('<p><button id = "logout">ログアウト</button></p>');
+
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
-			alert('通信に失敗しました。');
+
+			$('#login').append('<form id="loginInf"><div><label for="logId">社員ID:</label><input type="text" maxlength="10" name="loginId" id="loginId"></div><div><label for="logPss">ログインパスワード:</label><input type="text" maxlength="10" name="loginPass" id="loginPass"></div></form><p><button id="login-button">ログイン</button></p>')
+
 		}
 	})
 }
