@@ -19,7 +19,7 @@ public class EmployeeDAO {
 	 * クエリ文字列
 	 */
 	private static final String SELECT_ALL_QUERY = "SELECT EMP.ID AS ID, EMP.EMPID, EMP.NAME, EMP.AGE, EMP.GENDER, EMP.PHOTOID, EMP.ZIP, EMP.PREF, EMP.ADDRESS, "
-							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE "
+							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE, EMP.PASSWORD "
 							+"FROM EMPLOYEE EMP "
 							+"INNER JOIN POST POST "
 							+"ON EMP.POSTID = POST.ID";
@@ -198,6 +198,7 @@ public class EmployeeDAO {
 		result.setZip(rs.getString("ZIP"));
 		result.setPref(rs.getString("PREF"));
 		result.setAddress(rs.getString("ADDRESS"));
+		result.setPassword(rs.getString("PASSWORD"));
 		Date entDate = rs.getDate("ENTDATE");
 		if (entDate != null) {
 			result.setEnterDate(entDate.toString());

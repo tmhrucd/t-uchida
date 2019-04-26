@@ -237,21 +237,47 @@ function makePostSelection(selectionId, employee) {
 	});
 }
 
+$('#login-button').click(login);
+
 function login(){
 
 	console.log('login start');
 
-	var logId = $('#loginId');
-	var logPass = $('#loginPass');
+	var logId = $('#loginId').val();
+	var logPass = $('#loginPass').val();
 
-	var query ={loginPass : logPass};
+	var query ={logPass : logPass};
+
+	console.log(logId+'  '+logPass);
 
 	$.ajax({
 		url : rootUrl + '/' +logId,
 		type : "GET",
 		dataType : "json",
+		async : false,
 		success : function(json) {
-			alert('アカウントあるよ');
+
+			if(json == null){
+
+				alert('アカウントないよ');
+
+			}
+
+			else{
+
+				alert('アカウントあるよ');
+
+				if(json[0].pass ==logPass)
+				{
+
+					alert('ログインできたよ');
+
+				}
+
+
+
+			}
+
 
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
