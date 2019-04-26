@@ -237,29 +237,38 @@ function makePostSelection(selectionId, employee) {
 	});
 }
 
-function login(){
 
-	console.log('login start');
-
-	var logId = $('#loginId');
-	var logPass = $('#loginPass');
-
-	var query ={loginPass : logPass};
-
-	$.ajax({
-		url : rootUrl + '/' +logId,
-		type : "GET",
-		dataType : "json",
-		success : function(json) {
-			alert('アカウントあるよ');
-
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			alert('アカウントないよ');
-		}
-	})
-
-
-}
-
-
+//$('#login-button').click(login);
+//
+//function login(){
+//
+//	console.log('login start');
+//
+//
+//	var id = $('#loginId').val();
+////	var logPass = $('#loginPass').val();
+//
+////	var query ={loginPass : logPass};
+//
+//	console.log(id);
+//
+//
+//	$.ajax({
+//		url : rootUrl + '/' + id,
+//		type : "GET",
+//		dataType : "json",
+//		async : false,
+//		success : function(data) {
+//
+//			console.log('findById success: ' + data.name);
+//
+//			alert('アカウントあるよ');
+//
+//		},
+//		error : function(jqXHR, textStatus, errorThrown) {
+//			alert('アカウントないよ');
+//		}
+//	})
+//
+//
+//}
