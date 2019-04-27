@@ -4,8 +4,10 @@ var rootUrl = "/java_s04/api/v1.1/employees";
 var getPostsUrl = "/java_s04/api/v1.1/posts";
 var getPhotoUrl = "/java_s04/api/v1.1/photos";
 
+/**初期表示**/
 initPage();
 
+/**セッション確認⇒表示**/
 checkSession();
 
 $('#saveEmployee').click(function() {
@@ -247,16 +249,15 @@ function login(){
 
 	console.log('login start');
 
-	var empId = $('#loginId').val();
-	var logPass = $('#loginPass').val();
+	var fd = new FormData(document.getElementById("loginInf"));
 
-	var urlWithParam = rootUrl+'/login?empId='+empId+'&logPass='+logPass;
-
-	console.log('社員ID='+empId+' パスワード='+logPass);
 
 	$.ajax({
-		url : urlWithParam,
+		url : rootUrl+'/login',
 		type : "POST",
+		data : fd,
+		contentType : false,
+		processData : false,
 		async : false,
 		success : function(data) {
 
@@ -295,7 +296,7 @@ function logout(){
 }
 
 
-
+/**セッションチェックし、表示非表示**/
 function checkSession(){
 
 	console.log('checkSession start');
@@ -306,13 +307,24 @@ function checkSession(){
 		async : false,
 		success : function(data) {
 
-			$('#login').append('<p>「'+data+'」でログインしています</p>');
-			$('#login').append('<p><button id = "logout">ログアウト</button></p>');
+			if(data != 'false'){
+
+				$('#login').append('<p>「'+data+'」でログインしています</p>');
+				$('#login').append('<p><button id = "logout">ログアウト</button></p>');
+
+			}
+			else{
+
+				$('#login').append('<form id="loginInf"><div><label for="logId">社員ID:</label><input type="text" maxlength="10" name="loginId" id="loginId"></div><div><label for="logPss">ログインパスワード:</label><input type="text" maxlength="10" name="loginPass" id="loginPass"></div></form><p><button id="login-button">ログイン</button></p>')
+
+			}
+
+
 
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 
-			$('#login').append('<form id="loginInf"><div><label for="logId">社員ID:</label><input type="text" maxlength="10" name="loginId" id="loginId"></div><div><label for="logPss">ログインパスワード:</label><input type="text" maxlength="10" name="loginPass" id="loginPass"></div></form><p><button id="login-button">ログイン</button></p>')
+			alert('データの通信に失敗しました。')
 
 		}
 	})

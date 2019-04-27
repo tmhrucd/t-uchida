@@ -53,8 +53,13 @@ public class EmployeeResource {
 	 * @throws IOException **/
 	@POST
 	@Path("login")
-	@Produces("text/plain")
-	public String login(@Context HttpServletRequest request , @Context HttpServletResponse response , @QueryParam("empId") String empId , @QueryParam("logPass") String logPass) throws IOException {
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String login(final FormDataMultiPart form, @Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+		String empId = form.getField("loginId").getValue();
+		String logPass = form.getField("loginPass").getValue();
+
+		System.out.println(empId+logPass);
 
 		Employee emp = empDao.findByEmpId(empId);
 
@@ -121,20 +126,29 @@ public class EmployeeResource {
 	}
 
 
+	/**セッション情報確認処理**/
 	@GET
 	@Path("session")
 	@Produces("text/plain")
 	public String session(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
 
 
+				String SessionInf = "false";
+
 				/**セッション取得**/
 				HttpSession session = request.getSession(false);
 
-				String SessionInf = (String)session.getAttribute("empId");
+				if(session != null){
 
-				Employee emp = empDao.findByEmpId(SessionInf);
+					SessionInf = (String)session.getAttribute("empId");
 
-				SessionInf = emp.getName();
+					Employee emp = empDao.findByEmpId(SessionInf);
+
+					SessionInf = emp.getName();
+
+				}
+
+
 
 		return SessionInf;
 	}
