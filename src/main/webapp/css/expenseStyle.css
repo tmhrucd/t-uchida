@@ -6,17 +6,17 @@ th {
 
 #list {
 	float: left;
-	width: 35%;
+	width: 55%;
 }
 
 #detail {
 	float: left;
-	width: 35%;
+	width: 25%;
 }
 
 #login {
 	float: left;
-	width: 30%;
+	width: 20%;
 }
 
 #insertBlock {

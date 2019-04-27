@@ -15,11 +15,6 @@
 		<div id="list">
 			<form id="expenseSelector">
 				<div>
-					<label for="postIdParam">部署:</label>
-					<select name="postIdParam" id="postIdParam">
-					</select>
-				</div>
-				<div>
 					<label for="statusParam">ステータス:</label>
 					<select name="statusParam" id="statusParam">
 					</select>
@@ -60,11 +55,11 @@
 				</div>
 				<div>
 					<label for="title">タイトル:</label>
-					<input type="text" maxlength="100" name="title" id="title">
+					<input type="text" maxlength="255" name="title" id="title">
 				</div>
 				<div>
 					<label for="title">支払先:</label>
-					<input type="text" maxlength="100" name="place" id="place">
+					<input type="text" maxlength="255" name="place" id="place">
 				</div>
 				<div>
 					<label for="money">金額:</label>
@@ -84,7 +79,7 @@
             	</div>
             	<div>
 					<label for="reason">却下理由:</label>
-					<input type="text" maxlength="100" name="reason" id="reason">
+					<input type="text" maxlength="4000" name="reason" id="reason">
 				</div>
 				<div>
 					<button id="reject">却下</button>

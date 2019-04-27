@@ -3,8 +3,68 @@
 var rootUrl = "/java_s04/api/v1.1/employees";
 var getPostsUrl = "/java_s04/api/v1.1/posts";
 var getPhotoUrl = "/java_s04/api/v1.1/photos";
+var expenseUrl = "/java_s04/api/v1.1/expenses";
+
+
+/**着手済・着手中**/
 
 initPage();
+
+function initPage() {
+//	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
+//	$('#postIdParam').append(newOption);
+//	makePostSelection('#postIdParam');
+	findAll();
+//	makePostSelection('#postId');
+}
+
+function findAll() {
+	console.log('findAll start.')
+	$.ajax({
+		type : "GET",
+		url : expenseUrl,
+		dataType : "json",
+		success : renderTable
+	});
+}
+
+function renderTable(data) {
+	var headerRow = '<tr><th>申請ID</th><th>申請日</th><th>更新日</th><th>申請者</th><th>タイトル</th><th>金額</th><th>ステータス</th><</tr>';
+
+	$('#expenses').children().remove();
+
+	if (data.length === 0) {
+		$('#expenses').append('<p>現在データが存在していません。</p>')
+	} else {
+		var table = $('<table>').attr('border', 1);
+		table.append(headerRow);
+
+		$.each(data, function(index, expense) {
+			var row = $('<tr>');
+			row.append($('<td>').text(expense.id));
+			row.append($('<td>').text(expense.reportDate));
+			row.append($('<td>').text(expense.updateDate));
+			row.append($('<td>').text(expense.name));
+			row.append($('<td>').text(expense.title));
+			row.append($('<td>').text(changeYen(expense.money)));
+			row.append($('<td>').text(expense.status));
+			row.append($('<td>').append(
+					$('<button>').text("詳細").attr("type","button").attr("onclick", "findById("+expense.id+')')
+				));
+			table.append(row);
+		});
+
+		$('#expenses').append(table);
+	}
+}
+
+/**金額表示のファンクション**/
+function changeYen(num){
+    return '¥' + String(num).split("").reverse().join("").match(/\d{1,3}/g).join(",").split("").reverse().join("");
+}
+
+
+/**未着手**/
 
 $('#saveEmployee').click(function() {
 	$('.error').children().remove();
@@ -57,24 +117,6 @@ $('#newEmployee').click(function() {
 });
 
 
-
-function initPage() {
-	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
-	$('#postIdParam').append(newOption);
-	makePostSelection('#postIdParam');
-	findAll();
-	makePostSelection('#postId');
-}
-
-function findAll() {
-	console.log('findAll start.')
-	$.ajax({
-		type : "GET",
-		url : rootUrl,
-		dataType : "json",
-		success : renderTable
-	});
-}
 
 function findById(id) {
 	console.log('findByID start - id:' + id);
@@ -165,33 +207,7 @@ function deleteById(id) {
 	});
 }
 
-function renderTable(data) {
-	var headerRow = '<tr><th>社員ID</th><th>氏名</th></tr>';
 
-	$('#employees').children().remove();
-
-	if (data.length === 0) {
-		$('#employees').append('<p>現在データが存在していません。</p>')
-	} else {
-		var table = $('<table>').attr('border', 1);
-		table.append(headerRow);
-
-		$.each(data, function(index, employee) {
-			var row = $('<tr>');
-			row.append($('<td>').text(employee.empId));
-			row.append($('<td>').text(employee.name));
-			row.append($('<td>').append(
-					$('<button>').text("編集").attr("type","button").attr("onclick", "findById("+employee.id+')')
-				));
-			row.append($('<td>').append(
-					$('<button>').text("削除").attr("type","button").attr("onclick", "deleteById("+employee.id+')')
-				));
-			table.append(row);
-		});
-
-		$('#employees').append(table);
-	}
-}
 
 function renderDetails(employee) {
 	$('.error').text('');
@@ -238,37 +254,4 @@ function makePostSelection(selectionId, employee) {
 }
 
 
-//$('#login-button').click(login);
-//
-//function login(){
-//
-//	console.log('login start');
-//
-//
-//	var id = $('#loginId').val();
-////	var logPass = $('#loginPass').val();
-//
-////	var query ={loginPass : logPass};
-//
-//	console.log(id);
-//
-//
-//	$.ajax({
-//		url : rootUrl + '/' + id,
-//		type : "GET",
-//		dataType : "json",
-//		async : false,
-//		success : function(data) {
-//
-//			console.log('findById success: ' + data.name);
-//
-//			alert('アカウントあるよ');
-//
-//		},
-//		error : function(jqXHR, textStatus, errorThrown) {
-//			alert('アカウントないよ');
-//		}
-//	})
-//
-//
-//}
+
