@@ -1,9 +1,13 @@
 package java_s04;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -43,10 +48,111 @@ public class EmployeeResource {
 	private final PhotoDAO photoDao = new PhotoDAO();
 
 
-	/**
-	 * IDとパスでログイン判定
-	 *
-	 */
+
+	/**ログイン処理
+	 * @throws IOException **/
+	@POST
+	@Path("login")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public String login(final FormDataMultiPart form, @Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+		String empId = form.getField("loginId").getValue();
+		String logPass = form.getField("loginPass").getValue();
+
+		System.out.println(empId+logPass);
+
+		Employee emp = empDao.findByEmpId(empId);
+
+		String str="";
+
+		String Pass = "";
+
+		//IDで検索できなかった
+		if(emp == null){
+			str = "指定されたIDの社員は登録されていません";
+		}
+		//社員はいた
+		else{
+
+			Pass = empDao.getPassByEmpId(empId);
+
+			//パスワードがあっている
+			if(Pass.equals(logPass))
+			{
+				str = "ログインしました";
+
+				/**権限ID取得**/
+				String authId = empDao.getAuthByEmpId(empId);
+
+				/**セッション発行**/
+				HttpSession session = request.getSession(true);
+
+				//10分間
+				session.setMaxInactiveInterval(1*60);
+
+				//社員ID格納
+				session.setAttribute("empId", empId);
+
+				//権限ID格納
+				session.setAttribute("authId", authId);
+
+				System.out.println("セッション開始できたよ");
+
+			}else{
+				str = "パスワードが間違っています";
+			}
+		}
+
+		return str;
+	}
+
+	/**アウト処理
+	 * @throws IOException **/
+	@POST
+	@Path("logout")
+	@Produces("text/plain")
+	public String logout(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+		/**セッション発行**/
+		HttpSession session = request.getSession(true);
+
+		/**セッション破棄**/
+		session.invalidate();
+
+		String str ="ok";
+
+		return str;
+	}
+
+
+	/**セッション情報確認処理**/
+	@GET
+	@Path("session")
+	@Produces("text/plain")
+	public String session(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+				String SessionInf = "false";
+
+				/**セッション取得**/
+				HttpSession session = request.getSession(false);
+
+				if(session != null){
+
+					SessionInf = (String)session.getAttribute("empId");
+
+					Employee emp = empDao.findByEmpId(SessionInf);
+
+					SessionInf = emp.getName();
+
+				}
+
+
+
+		return SessionInf;
+	}
+
 
 
 	/**
@@ -61,6 +167,20 @@ public class EmployeeResource {
 	public Employee findById(@PathParam("id") int id) {
 		return empDao.findById(id);
 	}
+
+	/**
+	 * EMPID指定で従業員情報を取得する。
+	 *
+	 * @param empId 取得対象の従業員のEMPID
+	 * @return 取得した従業員情報をJSON形式で返す。データが存在しない場合は空のオブジェクトが返る。
+	 */
+	@GET
+	@Path("emp/{empId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Employee findByEMPId(@PathParam("empId") String empId) {
+		return empDao.findByEmpId(empId);
+	}
+
 
 	/**
 	 * クエリパラメータ指定による検索を実施する。
