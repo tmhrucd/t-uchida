@@ -13,30 +13,28 @@
 
 	<!-- 経費一覧 -->
 		<div id="list">
-			<form id="employeeSelector">
+			<form id="expenseSelector">
 				<div>
-					<label for="postIdParam">所属:</label>
+					<label for="postIdParam">部署:</label>
 					<select name="postIdParam" id="postIdParam">
 					</select>
 				</div>
 				<div>
-					<label for="empIdParam">社員ID:</label>
-					<input type="text" maxlength="10" name="empIdParam" id="empIdParam">
+					<label for="statusParam">ステータス:</label>
+					<select name="statusParam" id="statusParam">
+					</select>
 				</div>
 				<div>
-					<label for="nameParam">名前に含まれる文字:</label>
+					<label for="nameParam">申請者名に含まれる文字:</label>
 					<input type="text" maxlength="10" name="nameParam" id="nameParam">
 				</div>
-				<button id="findEmployee">検索</button>
+				<button id="findExpense">検索</button>
 			</form>
 			<p>経費一覧:</p>
-			<div id="employees"></div>
+			<div id="expenses"></div>
 			<div id="insertBlock">
-				<button type="button" id="newEmployee">新規追加</button>
+				<button type="button" id="newExpense">新規登録</button>
 			</div>
-            <div>
-				<button id="downloadCsv" onclick="location.href='api/employees/csv'">CSVファイルに出力</button>
-            </div>
 		</div>
 
 	<!-- 検索 -->
@@ -45,49 +43,54 @@
 			<form id="employeeForm" enctype="multipart/form-data">
 				<div class="error"></div>
 				<div>
-					<label for="id">ID:</label>
+					<label for="id">申請ID:</label>
 					<input type="text" name="id" id="id" disabled>
 				</div>
 				<div>
-					<label for="empId">社員ID:</label>
-					<input type="text" maxlength="10" name="empId" id="empId">
+					<label for="reportDate">申請日:</label>
+					<input type="text" name="reportDate" id="reportDate" placeholder="2019-4-1">
 				</div>
 				<div>
-					<label for="name">氏名:</label>
-					<input type="text" maxlength="40" name="name" id="name">
+					<label for="updateDate">更新日:</label>
+            		<input type="text" name="updateDate" id="updateDate" placeholder="2019-4-1">
+            	</div>
+				<div>
+					<label for="reportName">申請者:</label>
+					<input type="text" maxlength="40" name="reportName" id="reportName">
 				</div>
 				<div>
-					<label for="age">年齢:</label>
-					<input type="text" name="age" id="age">
+					<label for="title">タイトル:</label>
+					<input type="text" maxlength="100" name="title" id="title">
 				</div>
 				<div>
-					性別:
-					<label><input type="radio" name="gender" value="MAN">男性</label>
-					<label><input type="radio" name="gender" value="WOMAN">女性</label>
+					<label for="title">支払先:</label>
+					<input type="text" maxlength="100" name="place" id="place">
 				</div>
 				<div>
-					<label for="zip">郵便番号:</label>
-					<input type="text" maxlength="10" name="zip" id="zip">
+					<label for="money">金額:</label>
+					<input type="text" name="money" id="money">
 				</div>
 				<div>
-					<label for="address">住所:</label>
- 		 	        <input type="text" maxlength="100" name="address" id="address">
+					<label for="status">ステータス:</label>
+					<input type="text" maxlength="40" name="status" id="status" disabled>
 				</div>
 				<div>
-					<label for="postId">所属:</label>
-					<select name="postId" id="postId">
-					</select>
+					<label for="updateName">更新者:</label>
+					<input type="text" maxlength="40" name="updateName" id="updateName">
 				</div>
-				<div>
-					<label for="enterDate">入社日:</label>
-					<input type="text" name="enterDate" id="enterDate" placeholder="2019-4-1">
-				</div>
-				<div>
-					<label for="retireDate">退社日:</label>
-            		<input type="text" name="retireDate" id="retireDate" placeholder="2019-4-1">
+
+            	<div>
+					<button id="approve">承認</button>
             	</div>
             	<div>
-					<button id="saveEmployee">保存</button>
+					<label for="reason">却下理由:</label>
+					<input type="text" maxlength="100" name="reason" id="reason">
+				</div>
+				<div>
+					<button id="reject">却下</button>
+            	</div>
+            	<div>
+					<button id="return">戻る</button>
             	</div>
 			</form>
 		</div>
@@ -117,7 +120,7 @@
 
 
 	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/employee.js"></script>
-
+<!-- <script src="js/expense.js"></script>
+ -->
 </body>
 </html>
