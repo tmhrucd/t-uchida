@@ -72,8 +72,6 @@ public class ExpenseResource {
 	/**未着手**/
 
 
-
-
 	/**
 	 * ID指定で従業員情報を取得する。
 	 *

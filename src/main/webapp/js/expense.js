@@ -4,6 +4,7 @@ var rootUrl = "/java_s04/api/v1.1/employees";
 var getPostsUrl = "/java_s04/api/v1.1/posts";
 var getPhotoUrl = "/java_s04/api/v1.1/photos";
 var expenseUrl = "/java_s04/api/v1.1/expenses";
+var getStatusesUrl = "/java_s04/api/v1.1/statuses";
 
 
 /**着手済・着手中**/
@@ -11,11 +12,11 @@ var expenseUrl = "/java_s04/api/v1.1/expenses";
 initPage();
 
 function initPage() {
-//	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
-//	$('#postIdParam').append(newOption);
-//	makePostSelection('#postIdParam');
+	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
+	$('#statusIdParam').append(newOption);
+	makeStatusSelection('#statusIdParam');
 	findAll();
-//	makePostSelection('#postId');
+	makeStatusSelection('#status');
 }
 
 function findAll() {
@@ -64,6 +65,48 @@ function changeYen(num){
 }
 
 
+
+function makeStatusSelection(selectionId, expense) {
+	console.log('makeStatusSelection start.')
+	$.ajax({
+		type : "GET",
+		url : getStatusesUrl,
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			$.each(data, function(index, status) {
+				var newOption = $('<option>').val(status.id).text(status.status);
+				if (expense != null && expense.post.id == status.id) {
+					newOption.prop('selected', isSelected);
+				}
+				$(selectionId).append(newOption);
+			});
+		}
+	});
+}
+
+/**検索ボタン押したとき**/
+$('#findExpense').click(function() {
+	findByParam();
+	return false;
+})
+
+/**検索ファンクション**/
+function findByParam() {
+	console.log('findByParam start.');
+
+	var urlWithParam = expenseUrl+'?statusId='+$('#statusIdParam').val()
+		+'&nameParam='+$('#nameParam').val();
+	$.ajax({
+		type : "GET",
+		url : urlWithParam,
+		dataType : "json",
+		success : renderTable
+	});
+}
+
+
+
+
 /**未着手**/
 
 $('#saveEmployee').click(function() {
@@ -107,10 +150,7 @@ $('#saveEmployee').click(function() {
 	return false;
 })
 
-$('#findEmployee').click(function() {
-	findByParam();
-	return false;
-})
+
 
 $('#newEmployee').click(function() {
 	renderDetails({});
@@ -131,19 +171,7 @@ function findById(id) {
 	});
 }
 
-function findByParam() {
-	console.log('findByParam start.');
 
-	var urlWithParam = rootUrl+'?postId='+$('#postIdParam').val()
-		+'&empId='+$('#empIdParam').val()
-		+'&nameParam='+$('#nameParam').val();
-	$.ajax({
-		type : "GET",
-		url : urlWithParam,
-		dataType : "json",
-		success : renderTable
-	});
-}
 
 function addEmployee() {
 	console.log('addEmployee start');
@@ -235,23 +263,7 @@ function renderDetails(employee) {
 	$('#retireDate').val(employee.retireDate);
 }
 
-function makePostSelection(selectionId, employee) {
-	console.log('makePostSelection start.')
-	$.ajax({
-		type : "GET",
-		url : getPostsUrl,
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			$.each(data, function(index, post) {
-				var newOption = $('<option>').val(post.id).text(post.name);
-				if (employee != null && employee.post.id == post.id) {
-					newOption.prop('selected', isSelected);
-				}
-				$(selectionId).append(newOption);
-			});
-		}
-	});
-}
+
 
 
 

@@ -41,19 +41,15 @@ public class ExpParam {
 	public String getWhereClause() {
 		StringBuilder whereClause = new StringBuilder();
 		if (statusId != 0) {
-			if (whereClause.length() == 0) {
 
-			} else {
-				whereClause.append(" AND ");
-			}
+			whereClause.append(" AND ");
+
 			whereClause.append("EXP.STATUS_ID = ?");
 		}
 		if (!nameParam.isEmpty()) {
-			if (whereClause.length() == 0) {
 
-			} else {
-				whereClause.append(" AND ");
-			}
+			whereClause.append(" AND ");
+
 			whereClause.append("EMP1.NAME LIKE ?");
 		}
 
@@ -78,12 +74,5 @@ public class ExpParam {
 			statement.setString(count++, nameParam);
 		}
 	}
-
-
-	/***未着手*/
-
-	private final static String BASE_WHERE_CLAUSE = " WHERE ";
-
-
 
 }
