@@ -97,7 +97,7 @@ public class ExpenseResource {
 		if (updateDateStr != null && !updateDateStr.isEmpty()) {
 			expense.setUpdateDate(updateDateStr);
 		}
-		expense.setEmpId("EMP0002"/**form.getField("empId").getValue()**/);
+		expense.setEmpId(form.getField("reportEmpId").getValue());
 //		expense.setName(form.getField("name").getValue());
 		expense.setTitle(form.getField("title").getValue());
 		expense.setMoney(Integer.parseInt(form.getField("money").getValue()));
