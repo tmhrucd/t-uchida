@@ -16,7 +16,7 @@ function initPage() {
 	$('#statusIdParam').append(newOption);
 	makeStatusSelection('#statusIdParam');
 	findAll();
-	makeStatusSelection('#status');
+//	makeStatusSelection('#status');
 }
 
 function findAll() {
@@ -106,36 +106,25 @@ function findByParam() {
 
 
 
-/**未着手**/
-
-$('#saveEmployee').click(function() {
+$('#addExpense').click(function() {
 	$('.error').children().remove();
-	if ($('#name').val() === '') {
-		$('.error').append('<div>名前は必須入力です。</div>');
+	if ($('#reportDate').val() === '') {
+		$('.error').append('<div>申請日は必須入力です。</div>');
 	}
-	if ($('#empId').val() === '') {
-		$('.error').append('<div>社員IDは必須入力です。</div>');
+	if ($('#reportName').val() === '') {
+		$('.error').append('<div>申請者名は必須入力です。</div>');
 	}
-	if ($('#empId').val() === '') {
-		$('.error').append('<div>社員IDは必須入力です。</div>');
+	if ($('#title').val() === '') {
+		$('.error').append('<div>タイトルは必須入力です。</div>');
 	}
-	if ($('#age').val() === '') {
-		$('.error').append('<div>年齢は必須入力です。</div>');
+	if ($('#place').val() === '') {
+		$('.error').append('<div>支払先は必須入力です。</div>');
 	}
-	if ($('#gender').val() === '') {
-		$('.error').append('<div>性別として男性、女性いずれかを選択してください。</div>');
+	if ($('#money').val() === '') {
+		$('.error').append('<div>金額は必須入力です。</div>');
 	}
-	if ($('#zip').val() === '') {
-		$('.error').append('<div>郵便番号は必須入力です。</div>');
-	}
-	if ($('#pref').val() === '') {
-		$('.error').append('<div>都道府県は必須入力です。</div>');
-	}
-	if ($('#address').val() === '') {
-		$('.error').append('<div>住所は必須入力です。</div>');
-	}
-	if ($('#postId').val() === '') {
-		$('.error').append('<div>いずれかの部署を選択してください。</div>');
+	if ($('#status').val() === '') {
+		$('.error').append('<div>ステータスは必須入力です。新規追加ボタンを押してください。</div>');
 	}
 	if ($('.error').children().length != 0) {
 		return false;
@@ -143,17 +132,71 @@ $('#saveEmployee').click(function() {
 
 	var id = $('#id').val()
 	if (id === '')
-		addEmployee();
-	else
-		updateEmployee(id);
+		addExpense();
+//	else
+//		updateEmployee(id);
 	return false;
 })
 
 
-
-$('#newEmployee').click(function() {
+/**新規追加ボタンで空に**/
+$('#newExpense').click(function() {
 	renderDetails({});
+
+	$('#status').val('申請中');
 });
+
+/**詳細表示**/
+function renderDetails(expense) {
+	$('.error').text('');
+	$('#id').val(expense.id);
+	$('#reportDate').val(expense.reportDate);
+	$('#updateDate').val(expense.updateDate);
+	$('#reportName').val(expense.name);
+	$('#title').val(expense.title);
+	$('#place').val(expense.place);
+	$('#money').val(expense.money);
+	$('#status').val(expense.status);
+	$('#updateName').val(expense.updateName);
+	$('#reason').val(expense.reason);
+}
+
+
+
+/**新規申請追加**/
+function addExpense() {
+	console.log('addExpense start');
+
+	var fd = new FormData(document.getElementById("expenseForm"));
+
+	$.ajax({
+		url : expenseUrl,
+		type : "POST",
+		data : fd,
+		contentType : false,
+		processData : false,
+		dataType : "json",
+		success : function(data, textStatus, jqXHR) {
+			alert('申請に成功しました');
+			findAll();
+			renderDetails(data);
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('申請に失敗しました');
+		}
+	})
+}
+
+
+
+
+/**未着手**/
+
+
+
+
+
+
 
 
 
@@ -172,28 +215,7 @@ function findById(id) {
 
 
 
-function addEmployee() {
-	console.log('addEmployee start');
 
-	var fd = new FormData(document.getElementById("employeeForm"));
-
-	$.ajax({
-		url : rootUrl,
-		type : "POST",
-		data : fd,
-		contentType : false,
-		processData : false,
-		dataType : "json",
-		success : function(data, textStatus, jqXHR) {
-			alert('社員データの追加に成功しました');
-			findAll();
-			renderDetails(data);
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			alert('社員データの追加に失敗しました');
-		}
-	})
-}
 
 function updateEmployee(id) {
 	console.log('updateEmployee start');
@@ -236,31 +258,6 @@ function deleteById(id) {
 
 
 
-function renderDetails(employee) {
-	$('.error').text('');
-	$('#id').val(employee.id);
-	$('#empId').val(employee.empId);
-	$('#name').val(employee.name);
-	$('#age').val(employee.age);
-	$('input[name="gender"]').val([ employee.gender ]);
-
-	$('#currentPhoto').children().remove();
-	$('#photoId').val(employee.photoId);
-	if (employee.photoId != null && employee.photoId != 0) {
-		// 末尾のDate.now()はキャッシュ対策
-		var currentPhoto = $('<img>').attr('src',
-				getPhotoUrl + '/' + employee.photoId + '?' + Date.now());
-		$('#currentPhoto').append(currentPhoto)
-	}
-	$('#zip').val(employee.zip);
-	$('#pref').val(employee.pref);
-	$('#address').val(employee.address);
-	if (employee.post != null) {
-		$('#postId').val(employee.post.id);
-	}
-	$('#enterDate').val(employee.enterDate);
-	$('#retireDate').val(employee.retireDate);
-}
 
 
 

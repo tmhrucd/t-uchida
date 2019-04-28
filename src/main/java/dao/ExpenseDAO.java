@@ -24,11 +24,14 @@ public class ExpenseDAO {
 							+"FROM EXPENSE EXP ,EMPLOYEE EMP1 ,EMPLOYEE EMP2 ,EXP_STATUS STA "
 							+"WHERE 1=1 AND EXP.EMPID = EMP1.EMPID AND EXP.STATUS_ID = STA.ID AND EXP.UPDATE_EMPID = EMP2.EMPID(+) ";
 
+	private static final String INSERT_QUERY = "INSERT INTO "
+			+"EXPENSE(ID, REPORT_DATE, UPDATE_DATE, EMPID, TITLE, MONEY, STATUS_ID, PLACE, UPDATE_EMPID, TEXT) "
+			+"VALUES(?,?,?,?,?,?,?,?,?,?)";
+
+
 	/**未着手**/
 	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.ID = ?";
-	private static final String INSERT_QUERY = "INSERT INTO "
-							+"EMPLOYEE(EMPID, NAME, AGE, GENDER, PHOTOID, ZIP, PREF, ADDRESS, POSTID, ENTDATE, RETDATE) "
-							+"VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+
 	private static final String UPDATE_QUERY = "UPDATE EMPLOYEE "
 							+"SET EMPID=?,NAME=?,AGE=?,GENDER=?,PHOTOID=?,ZIP=?,PREF=?,"
 							+"ADDRESS=?,POSTID=?,ENTDATE=?,RETDATE=? WHERE ID = ?";
@@ -130,14 +133,14 @@ public class ExpenseDAO {
 			statement.setDate(count++, null);
 		}
 		statement.setString(count++, expense.getEmpId());
-		statement.setString(count++, expense.getName());
+//		statement.setString(count++, expense.getName());
 		statement.setString(count++, expense.getTitle());
 		statement.setInt(count++, expense.getMoney());
 		statement.setInt(count++, expense.getStatusId());
-		statement.setString(count++, expense.getStatus());
+//		statement.setString(count++, expense.getStatus());
 		statement.setString(count++, expense.getPlace());
 		statement.setString(count++, expense.getUpdateEmpId());
-		statement.setString(count++, expense.getUpdateName());
+//		statement.setString(count++, expense.getUpdateName());
 		statement.setString(count++, expense.getReason());
 
 
@@ -146,6 +149,40 @@ public class ExpenseDAO {
 		}
 	}
 
+
+	/**
+	 * 指定されたExpenseオブジェクトを新規にDBに登録する。
+	 * 登録されたオブジェクトにはDB上のIDが上書きされる。
+	 * 何らかの理由で登録に失敗した場合、IDがセットされない状態（=0）で返却される。
+	 *
+	 * @param Expense 登録対象オブジェクト
+	 * @return DB上のIDがセットされたオブジェクト
+	 */
+
+	public Expense create(Expense expense) {
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return expense;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, new String[] { "ID" });) {
+			// INSERT実行
+			setParameter(statement, expense, false);
+			statement.executeUpdate();
+
+			// INSERTできたらKEYを取得
+			ResultSet rs = statement.getGeneratedKeys();
+			rs.next();
+			int id = rs.getInt(1);
+			expense.setId(id);
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return expense;
+	}
 
 
 
@@ -189,40 +226,7 @@ public class ExpenseDAO {
 //
 //
 //
-//	/**
-//	 * 指定されたEmployeeオブジェクトを新規にDBに登録する。
-//	 * 登録されたオブジェクトにはDB上のIDが上書きされる。
-//	 * 何らかの理由で登録に失敗した場合、IDがセットされない状態（=0）で返却される。
-//	 *
-//	 * @param Employee 登録対象オブジェクト
-//	 * @return DB上のIDがセットされたオブジェクト
-//	 */
-//
-//	public Employee create(Employee employee) {
-//		Connection connection = ConnectionProvider.getConnection();
-//		if (connection == null) {
-//			return employee;
-//		}
-//
-//		try (PreparedStatement statement = connection.prepareStatement(INSERT_QUERY, new String[] { "ID" });) {
-//			// INSERT実行
-//			setParameter(statement, employee, false);
-//			statement.executeUpdate();
-//
-//			// INSERTできたらKEYを取得
-//			ResultSet rs = statement.getGeneratedKeys();
-//			rs.next();
-//			int id = rs.getInt(1);
-//			employee.setId(id);
-//		} catch (SQLException ex) {
-//			ex.printStackTrace();
-//		} finally {
-//			ConnectionProvider.close(connection);
-//		}
-//
-//		return employee;
-//	}
-//
+
 //	/**
 //	 * 指定されたEmployeeオブジェクトを使ってDBを更新する。
 //	 *

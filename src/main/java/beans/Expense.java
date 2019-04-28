@@ -156,23 +156,23 @@ public class Expense {
 	 */
 	public boolean isValidObject() {
 		if ((empId == null) || (empId.getBytes().length > MAX_EMPID_LENGTH)) {
-			System.err.println("Employee: Bad employee empId length.");
+			System.err.println("Expense: Bad expense empId length.");
 			return false;
 		}
-		if ((updateEmpId == null) || (updateEmpId.getBytes().length > MAX_EMPID_LENGTH)) {
-			System.err.println("Employee: Bad employee updateEmpId length.");
+		if ((updateEmpId != null) && (updateEmpId.getBytes().length > MAX_EMPID_LENGTH)) {
+			System.err.println("Expense: Bad expense updateEmpId length.");
 			return false;
 		}
 		if ((title != null) && (title.getBytes().length > MAX_TITLE_LENGTH)) {
-			System.err.println("Employee: Bad zip length.");
+			System.err.println("Expense: Bad title length.");
 			return false;
 		}
 		if ((place != null) && (place.getBytes().length > MAX_PLACE_LENGTH)) {
-			System.err.println("Employee: Bad pref length.");
+			System.err.println("Expense: Bad place length.");
 			return false;
 		}
 		if ((reason != null) && (reason.getBytes().length > MAX_REASON_LENGTH)) {
-			System.err.println("Employee: Bad address length.");
+			System.err.println("Expense: Bad reason length.");
 			return false;
 		}
 		return true;

@@ -34,6 +34,7 @@ import dao.ExpenseDAO;
 import dao.Param;
 import dao.PhotoDAO;
 import dao.PostDAO;
+import dao.StatusDAO;
 
 
 
@@ -45,9 +46,12 @@ import dao.PostDAO;
 @Path("expenses")
 public class ExpenseResource {
 	private final EmployeeDAO empDao = new EmployeeDAO();
-	private final PostDAO postDao = new PostDAO();
 	private final PhotoDAO photoDao = new PhotoDAO();
+	private final PostDAO postDao = new PostDAO();
+
+
 	private final ExpenseDAO expDao = new ExpenseDAO();
+	private final StatusDAO statusDao = new StatusDAO();
 
 
 
@@ -69,6 +73,53 @@ public class ExpenseResource {
 
 
 
+	/**
+	 * 新規申請情報を登録する。
+	 *
+	 * @param form 申請情報を収めたオブジェクト
+	 * @return DB上のIDが振られた新規申請情報
+	 * @throws WebApplicationException 入力データチェックに失敗した場合に送出される。
+	 */
+
+	@POST
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Expense create(final FormDataMultiPart form) throws WebApplicationException {
+		Expense expense = new Expense();
+
+		expense.setId(0);
+		String reportDateStr = form.getField("reportDate").getValue();
+		if (reportDateStr != null && !reportDateStr.isEmpty()) {
+			expense.setReportDate(reportDateStr);
+		}
+
+		String updateDateStr = form.getField("updateDate").getValue();
+		if (updateDateStr != null && !updateDateStr.isEmpty()) {
+			expense.setUpdateDate(updateDateStr);
+		}
+		expense.setEmpId("EMP0002"/**form.getField("empId").getValue()**/);
+//		expense.setName(form.getField("name").getValue());
+		expense.setTitle(form.getField("title").getValue());
+		expense.setMoney(Integer.parseInt(form.getField("money").getValue()));
+		expense.setStatusId(1);
+//		expense.setStatus("申請中");
+		expense.setPlace(form.getField("place").getValue());
+		expense.setUpdateEmpId(null);
+//		expense.setUpdateName(form.getField("updateName").getValue());
+		expense.setReason(form.getField("reason").getValue());
+
+
+		if (!expense.isValidObject()) {
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		}
+
+
+		return expDao.create(expense);
+	}
+
+
+
+
 	/**未着手**/
 
 
@@ -87,63 +138,7 @@ public class ExpenseResource {
 
 
 
-	/**
-	 * 指定した従業員情報を登録する。
-	 *
-	 * @param form 従業員情報（画像含む）を収めたオブジェクト
-	 * @return DB上のIDが振られた従業員情報
-	 * @throws WebApplicationException 入力データチェックに失敗した場合に送出される。
-	 */
 
-	@POST
-	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Employee create(final FormDataMultiPart form) throws WebApplicationException {
-		Employee employee = new Employee();
-
-		employee.setId(0);
-		employee.setEmpId(form.getField("empId").getValue());
-		employee.setName(form.getField("name").getValue());
-		employee.setAge(Integer.parseInt(form.getField("age").getValue()));
-		String gender = form.getField("gender").getValue();
-		employee.setGender(Gender.valueOf(gender));
-
-		employee.setZip(form.getField("zip").getValue());
-		employee.setPref(form.getField("pref").getValue());
-		employee.setAddress(form.getField("address").getValue());
-
-		String enterDateStr = form.getField("enterDate").getValue();
-		if (enterDateStr != null && !enterDateStr.isEmpty()) {
-			employee.setEnterDate(enterDateStr);
-		}
-
-		String retireDateStr = form.getField("retireDate").getValue();
-		if (retireDateStr != null && !retireDateStr.isEmpty()) {
-			employee.setRetireDate(retireDateStr);
-		}
-
-		if (!employee.isValidObject()) {
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-		}
-
-		// Photo関連の処理
-		FormDataBodyPart photoPart = form.getField("photo");
-		Photo photo = createPhoto(photoPart);
-		if (photo.getId() == 0) {
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-		}
-		employee.setPhotoId(photo.getId());
-
-		// Post関連の処理
-		int postId = Integer.parseInt(form.getField("postId").getValue());
-		Post post = postDao.findById(postId);
-		if (post == null) {
-			throw new WebApplicationException(Response.Status.BAD_REQUEST);
-		}
-		employee.setPost(post);
-
-		return empDao.create(employee);
-	}
 
 	/**
 	 * 指定した情報でDBを更新する。
