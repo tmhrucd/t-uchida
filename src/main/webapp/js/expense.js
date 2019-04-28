@@ -195,11 +195,6 @@ function addExpense() {
 
 
 
-
-
-
-
-
 function findById(id) {
 	console.log('findByID start - id:' + id);
 	$.ajax({
