@@ -4,6 +4,9 @@ import java.io.InputStream;
 import java.sql.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -14,6 +17,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -65,9 +69,25 @@ public class ExpenseResource {
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Expense> findByParam(@QueryParam("statusId") int statusId,
+	public List<Expense> findByParam(@Context HttpServletRequest request , @Context HttpServletResponse response ,@QueryParam("statusId") int statusId,
 			@QueryParam("nameParam") String nameParam) {
-		ExpParam param = new ExpParam(statusId, nameParam);
+
+		int AuthId  = 0 ;
+		String EmpId = "";
+
+		/**セッション取得**/
+		HttpSession session = request.getSession(false);
+
+		if(session != null){
+
+			AuthId = Integer.parseInt((String)session.getAttribute("authId"));
+			EmpId = (String)session.getAttribute("empId");
+
+		}
+
+		System.out.println(AuthId+EmpId);
+
+		ExpParam param = new ExpParam(statusId, nameParam,AuthId,EmpId);
 		return expDao.findByParam(param);
 	}
 

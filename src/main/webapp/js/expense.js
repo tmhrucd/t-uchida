@@ -20,10 +20,39 @@ function initPage() {
 	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
 	$('#statusIdParam').append(newOption);
 	makeStatusSelection('#statusIdParam');
-	findAll();
+
+	//ログインしているか否か
+	$.ajax({
+		url : rootUrl + '/EmpId',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			if(data == 'false')
+			{
+				$('#expenses').children().remove();
+				$('#expenses').append('<p>ログインしてください。</p>')
+
+			}
+			else{
+
+				findAll();
+
+			}
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+
+
 //	makeStatusSelection('#status');
 }
 
+/**全件表示**/
 function findAll() {
 	console.log('findAll start.')
 	$.ajax({
@@ -34,10 +63,14 @@ function findAll() {
 	});
 }
 
+
+
 function renderTable(data) {
 	var headerRow = '<tr><th>申請ID</th><th>申請日</th><th>更新日</th><th>申請者</th><th>タイトル</th><th>金額</th><th>ステータス</th><</tr>';
 
 	$('#expenses').children().remove();
+
+
 
 	if (data.length === 0) {
 		$('#expenses').append('<p>現在データが存在していません。</p>')
@@ -91,7 +124,33 @@ function makeStatusSelection(selectionId, expense) {
 
 /**検索ボタン押したとき**/
 $('#findExpense').click(function() {
-	findByParam();
+
+	//ログインしているか否か
+	$.ajax({
+		url : rootUrl + '/EmpId',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			if(data == 'false')
+			{
+				$('#expenses').children().remove();
+				$('#expenses').append('<p>ログインしてください。</p>')
+			}
+			else{
+
+				findByParam();
+
+			}
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+
 	return false;
 })
 
@@ -308,6 +367,8 @@ function getEmpIdBySession(){
 
 }
 
+
+
 /**セッションを確認し、権限IDを取得**/
 function getAuthIdBySession(){
 
@@ -335,6 +396,9 @@ function getAuthIdBySession(){
 
 $('#SeEmpId').click(getEmpIdBySession);
 $('#SeAuthId').click(getAuthIdBySession);
+
+
+
 
 /**未着手**/
 

@@ -12,12 +12,39 @@ public class ExpParam {
 
 	private int statusId;
 	private String nameParam;
+	private int authId;
+	private String empId ;
 
-	public ExpParam(int statusId, String nameParam) {
+
+
+
+
+
+	public ExpParam(int statusId, String nameParam ,int authId , String empId) {
 		this.setStatusId(statusId);
 		this.setNameParam(nameParam);
+		this.setAuthId(authId);
+		this.setEmpId(empId);
+
 	}
 
+
+	public String getEmpId() {
+		return empId;
+	}
+
+
+	public void setEmpId(String empId) {
+		this.empId = empId;
+	}
+
+	public int getAuthId() {
+		return authId;
+	}
+
+	public void setAuthId(int authId) {
+		this.authId = authId;
+	}
 	public int getStatusId() {
 		return statusId;
 	}
@@ -40,6 +67,13 @@ public class ExpParam {
 	 */
 	public String getWhereClause() {
 		StringBuilder whereClause = new StringBuilder();
+		if(authId == 2){
+
+			whereClause.append(" AND ");
+
+			whereClause.append("EXP.EMPID = ?");
+
+		}
 		if (statusId != 0) {
 
 			whereClause.append(" AND ");
@@ -67,6 +101,11 @@ public class ExpParam {
 	 */
 	public void setParameter(PreparedStatement statement) throws SQLException {
 		int count = 1;
+		if(authId == 2){
+
+			statement.setString(count++, empId);
+
+		}
 		if (statusId != 0) {
 			statement.setInt(count++, statusId);
 		}
