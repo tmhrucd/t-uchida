@@ -284,9 +284,57 @@ function checkSession(){
 }
 
 
+/**セッションを確認し、社員IDを取得**/
+function getEmpIdBySession(){
+
+	console.log('checkEmpID start');
+
+	$.ajax({
+		url : rootUrl + '/EmpId',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			alert(data);
+			return data;
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+
+}
+
+/**セッションを確認し、権限IDを取得**/
+function getAuthIdBySession(){
+
+	console.log('checkAuthID start');
+
+	$.ajax({
+		url : rootUrl + '/AuthId',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			alert(data);
+			return data;
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+
+}
 
 
-
+$('#SeEmpId').click(getEmpIdBySession);
+$('#SeAuthId').click(getAuthIdBySession);
 
 /**未着手**/
 

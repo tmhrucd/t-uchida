@@ -106,7 +106,7 @@ public class EmployeeResource {
 		return str;
 	}
 
-	/**アウト処理
+	/**ログアウト処理
 	 * @throws IOException **/
 	@POST
 	@Path("logout")
@@ -153,6 +153,49 @@ public class EmployeeResource {
 		return SessionInf;
 	}
 
+
+	/**セッションからEMPID取得**/
+	@GET
+	@Path("EmpId")
+	@Produces("text/plain")
+	public String EmpId(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+				String EmpId = "false";
+
+				/**セッション取得**/
+				HttpSession session = request.getSession(false);
+
+				if(session != null){
+
+					EmpId = (String)session.getAttribute("empId");
+
+				}
+
+		return EmpId;
+	}
+
+
+	/**セッションから権限ID取得**/
+	@GET
+	@Path("AuthId")
+	@Produces("text/plain")
+	public String AuthId(@Context HttpServletRequest request , @Context HttpServletResponse response ) throws IOException {
+
+
+				String AuthId = "false";
+
+				/**セッション取得**/
+				HttpSession session = request.getSession(false);
+
+				if(session != null){
+
+					AuthId = (String)session.getAttribute("authId");
+
+				}
+
+		return AuthId;
+	}
 
 
 	/**
