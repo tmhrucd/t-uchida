@@ -64,7 +64,6 @@ function findAll() {
 }
 
 
-
 function renderTable(data) {
 	var headerRow = '<tr><th>申請ID</th><th>申請日</th><th>更新日</th><th>申請者</th><th>タイトル</th><th>金額</th><th>ステータス</th><</tr>';
 
@@ -122,6 +121,24 @@ function makeStatusSelection(selectionId, expense) {
 	});
 }
 
+
+
+
+/**検索ファンクション**/
+function findByParam() {
+	console.log('findByParam start.');
+
+	var urlWithParam = expenseUrl+'?statusId='+$('#statusIdParam').val()
+		+'&nameParam='+$('#nameParam').val();
+	$.ajax({
+		type : "GET",
+		url : urlWithParam,
+		dataType : "json",
+		success : renderTable
+	});
+}
+
+
 /**検索ボタン押したとき**/
 $('#findExpense').click(function() {
 
@@ -154,51 +171,58 @@ $('#findExpense').click(function() {
 	return false;
 })
 
-/**検索ファンクション**/
-function findByParam() {
-	console.log('findByParam start.');
-
-	var urlWithParam = expenseUrl+'?statusId='+$('#statusIdParam').val()
-		+'&nameParam='+$('#nameParam').val();
-	$.ajax({
-		type : "GET",
-		url : urlWithParam,
-		dataType : "json",
-		success : renderTable
-	});
-}
-
-
 
 $('#addExpense').click(function() {
-	$('.error').children().remove();
-	if ($('#reportDate').val() === '') {
-		$('.error').append('<div>申請日は必須入力です。</div>');
+
+	/**未ログイン**/
+	if($('#reportEmpId').val() == 'ログインしてください'){
+
+		alert('経費申請にはログインが必要です。')
+
 	}
-	if ($('#reportName').val() === '') {
-		$('.error').append('<div>申請者名は必須入力です。</div>');
+	/**新規申請ボタン押してない**/
+	else if ($('#status').val() === '') {
+
+		alert('新規申請ボタンを押してください。')
+
 	}
-	if ($('#title').val() === '') {
-		$('.error').append('<div>タイトルは必須入力です。</div>');
-	}
-	if ($('#place').val() === '') {
-		$('.error').append('<div>支払先は必須入力です。</div>');
-	}
-	if ($('#money').val() === '') {
-		$('.error').append('<div>金額は必須入力です。</div>');
-	}
-	if ($('#status').val() === '') {
-		$('.error').append('<div>ステータスは必須入力です。新規追加ボタンを押してください。</div>');
-	}
-	if ($('.error').children().length != 0) {
-		return false;
+	/**ログイン中**/
+	else{
+
+		$('.error').children().remove();
+		if ($('#reportDate').val() === '') {
+			$('.error').append('<div>申請日は必須入力です。</div>');
+		}
+		if ($('#reportEmpId').val() === '') {
+			$('.error').append('<div>申請者社員IDは必須入力です。</div>');
+		}
+		if ($('#reportName').val() === '') {
+			$('.error').append('<div>申請者名は必須入力です。</div>');
+		}
+		if ($('#title').val() === '') {
+			$('.error').append('<div>タイトルは必須入力です。</div>');
+		}
+		if ($('#place').val() === '') {
+			$('.error').append('<div>支払先は必須入力です。</div>');
+		}
+		if ($('#money').val() === '') {
+			$('.error').append('<div>金額は必須入力です。</div>');
+		}
+		if ($('.error').children().length != 0) {
+			return false;
+		}
+
+		var id = $('#id').val()
+		if (id === '')
+			addExpense();
+
+//		else
+//		updateEmployee(id);
+
+
 	}
 
-	var id = $('#id').val()
-	if (id === '')
-		addExpense();
-//	else
-//		updateEmployee(id);
+
 	return false;
 })
 
@@ -207,7 +231,34 @@ $('#addExpense').click(function() {
 $('#newExpense').click(function() {
 	renderDetails({});
 
+	//項目自動入力
 	$('#status').val('申請中');
+
+	$.ajax({
+		url : rootUrl + '/EmpId',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			if(data == 'false'){
+
+				$('#reportEmpId').val('ログインしてください')
+
+			}
+			else[
+
+				$('#reportEmpId').val(data)
+
+			]
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+
 });
 
 /**詳細表示**/
@@ -460,11 +511,6 @@ function deleteById(id) {
 		}
 	});
 }
-
-
-
-
-
 
 
 
