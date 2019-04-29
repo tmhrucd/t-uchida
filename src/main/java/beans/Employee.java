@@ -28,7 +28,21 @@ public class Employee {
 	private Post post;
 	private String enterDate;
 	private String retireDate;
+	private String password;
+	private int authId;
 
+	public int getAuthId() {
+		return authId;
+	}
+	public void setAuthId(int authId) {
+		this.authId = authId;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public int getId() {
 		return id;
 	}
@@ -166,6 +180,8 @@ public class Employee {
         sb.append(this.getGender());
         sb.append(",");
         sb.append(this.getPhotoId());
+        sb.append(",");
+        sb.append(this.getPassword());
         sb.append(",");
         String s = this.getZip();
         sb.append(s != null ? s : "");

@@ -4,7 +4,11 @@ var rootUrl = "/java_s04/api/v1.1/employees";
 var getPostsUrl = "/java_s04/api/v1.1/posts";
 var getPhotoUrl = "/java_s04/api/v1.1/photos";
 
+/**初期表示**/
 initPage();
+
+/**セッション確認⇒表示**/
+checkSession();
 
 $('#saveEmployee').click(function() {
 	$('.error').children().remove();
@@ -238,37 +242,92 @@ function makePostSelection(selectionId, employee) {
 }
 
 
-//$('#login-button').click(login);
-//
-//function login(){
-//
-//	console.log('login start');
-//
-//
-//	var id = $('#loginId').val();
-////	var logPass = $('#loginPass').val();
-//
-////	var query ={loginPass : logPass};
-//
-//	console.log(id);
-//
-//
-//	$.ajax({
-//		url : rootUrl + '/' + id,
-//		type : "GET",
-//		dataType : "json",
-//		async : false,
-//		success : function(data) {
-//
-//			console.log('findById success: ' + data.name);
-//
-//			alert('アカウントあるよ');
-//
-//		},
-//		error : function(jqXHR, textStatus, errorThrown) {
-//			alert('アカウントないよ');
-//		}
-//	})
-//
-//
-//}
+
+$('#login-button').click(login);
+
+/**ログインするファンクション**/
+function login(){
+
+	console.log('login start');
+
+	var fd = new FormData(document.getElementById("loginInf"));
+
+
+	$.ajax({
+		url : rootUrl+'/login',
+		type : "POST",
+		data : fd,
+		contentType : false,
+		processData : false,
+		async : false,
+		success : function(data) {
+
+			alert(data);
+
+			location.reload();
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('通信に失敗しました。');
+		}
+	})
+
+}
+$('#logout').click(logout);
+
+/**ログアウトするファンクション**/
+function logout(){
+
+	console.log('logout start');
+
+	$.ajax({
+		url : rootUrl + '/logout' ,
+		type : "POST",
+		async : false,
+		success : function() {
+			alert('ログアウトしました')
+
+			location.reload();
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('通信に失敗しました。');
+		}
+	})
+
+}
+
+
+/**セッションチェックし、表示非表示**/
+function checkSession(){
+
+	console.log('checkSession start');
+
+	$.ajax({
+		url : rootUrl + '/session',
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+			if(data != 'false'){
+
+				$('#login').append('<p>「'+data+'」でログインしています</p>');
+				$('#login').append('<p><button id = "logout">ログアウト</button></p>');
+
+			}
+			else{
+
+				$('#login').append('<form id="loginInf"><div><label for="logId">社員ID:</label><input type="text" maxlength="10" name="loginId" id="loginId"></div><div><label for="logPss">ログインパスワード:</label><input type="text" maxlength="10" name="loginPass" id="loginPass"></div></form><p><button id="login-button">ログイン</button></p>')
+
+			}
+
+
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	})
+}
+

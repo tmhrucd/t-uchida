@@ -19,11 +19,12 @@ public class EmployeeDAO {
 	 * クエリ文字列
 	 */
 	private static final String SELECT_ALL_QUERY = "SELECT EMP.ID AS ID, EMP.EMPID, EMP.NAME, EMP.AGE, EMP.GENDER, EMP.PHOTOID, EMP.ZIP, EMP.PREF, EMP.ADDRESS, "
-							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE "
+							+"EMP.POSTID, POST.NAME as POST_NAME, EMP.ENTDATE, EMP.RETDATE, EMP.PASSWORD ,EMP.AUTH_ID "
 							+"FROM EMPLOYEE EMP "
 							+"INNER JOIN POST POST "
 							+"ON EMP.POSTID = POST.ID";
 	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.ID = ?";
+
 	private static final String INSERT_QUERY = "INSERT INTO "
 							+"EMPLOYEE(EMPID, NAME, AGE, GENDER, PHOTOID, ZIP, PREF, ADDRESS, POSTID, ENTDATE, RETDATE) "
 							+"VALUES(?,?,?,?,?,?,?,?,?,?,?)";
@@ -31,6 +32,9 @@ public class EmployeeDAO {
 							+"SET EMPID=?,NAME=?,AGE=?,GENDER=?,PHOTOID=?,ZIP=?,PREF=?,"
 							+"ADDRESS=?,POSTID=?,ENTDATE=?,RETDATE=? WHERE ID = ?";
 	private static final String DELETE_QUERY = "DELETE FROM EMPLOYEE WHERE ID = ?";
+
+	/**追加分*/
+	private static final String SELECT_BY_EMPID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.EMPID = ?";
 
 	/**
 	 * ID指定の検索を実施する。
@@ -62,6 +66,93 @@ public class EmployeeDAO {
 
 		return result;
 	}
+
+	/**
+	 * EMPID指定の検索を実施する。
+	 *
+	 * @param empId 検索対象のEMPID
+	 * @return 検索できた場合は検索結果データを収めたPostインスタンス。検索に失敗した場合はnullが返る。
+	 */
+	public Employee findByEmpId(String empId) {
+		Employee result = null;
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return result;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.next()) {
+				result = processRow(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return result;
+	}
+
+
+	/**社員IDからパスワードを返す**/
+	public String getPassByEmpId(String empId){
+
+		String Pass = "";
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return Pass;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			rs.next();
+			Pass = rs.getString("PASSWORD");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return Pass;
+	}
+
+
+	/**社員IDから権限IDを返す**/
+	public String getAuthByEmpId(String empId){
+
+		String Auth = "";
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return Auth;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			rs.next();
+			Auth = rs.getString("AUTH_ID");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return Auth;
+	}
+
+
 
 	/**
 	 * パラメータ指定の検索を実施する。
@@ -198,6 +289,8 @@ public class EmployeeDAO {
 		result.setZip(rs.getString("ZIP"));
 		result.setPref(rs.getString("PREF"));
 		result.setAddress(rs.getString("ADDRESS"));
+		result.setAuthId(rs.getInt("AUTH_ID"));
+
 		Date entDate = rs.getDate("ENTDATE");
 		if (entDate != null) {
 			result.setEnterDate(entDate.toString());
