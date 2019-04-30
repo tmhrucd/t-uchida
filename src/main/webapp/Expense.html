@@ -47,11 +47,15 @@
 				</div>
 				<div>
 					<label for="updateDate">更新日:</label>
-            		<input type="text" name="updateDate" id="updateDate" placeholder="2019-4-1">
+            		<input type="text" name="updateDate" id="updateDate" placeholder="2019-4-1" disabled>
             	</div>
             	<div>
 					<label for="reportEmpId">申請者社員ID:</label>
             		<input type="text" maxlength="10" name="reportEmpId" id="reportEmpId" readonly>
+            	</div>
+            	<div>
+					<label for="reportName">申請者:</label>
+            		<input type="text" maxlength="40" name="reportName" id="reportName" disabled>
             	</div>
 				<div>
 					<label for="title">タイトル:</label>
@@ -70,6 +74,10 @@
 					<input type="text" maxlength="40" name="status" id="status" disabled>
 				</div>
 				<div>
+				<div>
+					<label for="updateEmpId">更新者社員ID:</label>
+            		<input type="text" maxlength="10" name="updateEmpId" id="updateEmpId" disabled>
+            	</div>
 					<label for="updateName">更新者:</label>
 					<input type="text" maxlength="40" name="updateName" id="updateName" disabled>
 				</div>
@@ -84,12 +92,7 @@
 				<div>
 					<button id="reject">却下</button>
             	</div>
-            	<div>
-					<button id="addExpense">申請</button>
-            	</div>
-            	<div>
-					<button id="return">戻る</button>
-            	</div>
+            	<div id = "addExpense-button"><button id="addExpense">申請</button></div>
 			</form>
 		</div>
 

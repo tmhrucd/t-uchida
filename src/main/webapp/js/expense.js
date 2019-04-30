@@ -15,6 +15,9 @@ initPage();
 /**セッション確認⇒表示**/
 checkSession();
 
+/**ログイン**/
+$('#login-button').click(login);
+
 
 function initPage() {
 	var newOption = $('<option>').val(0).text('指定しない').prop('selected', true);
@@ -238,18 +241,37 @@ $('#newExpense').click(function() {
 		url : rootUrl + '/EmpId',
 		type : "GET",
 		async : false,
-		success : function(data) {
+		success : function(empId) {
 
-			if(data == 'false'){
+			if(empId == 'false'){
 
 				$('#reportEmpId').val('ログインしてください')
 
 			}
-			else[
+			else{
 
-				$('#reportEmpId').val(data)
+				/**社員ID表示**/
+				$('#reportEmpId').val(empId);
 
-			]
+				/**社員IDから社員名取得**/
+				$.ajax({
+					url : rootUrl + '/emp/'+empId,
+					type : "GET",
+					async : false,
+					success : function(employee) {
+
+						/**申請者名表示**/
+						$('#reportName').val(employee.name);
+
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+
+						alert('データの通信に失敗しました。')
+
+					}
+				});
+
+		     }
 
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
@@ -261,17 +283,42 @@ $('#newExpense').click(function() {
 
 });
 
+
+/**社員IDから社員情報取得**/
+function getEmpData(empId){
+
+	$.ajax({
+		url : rootUrl + '/emp/'+empId,
+		type : "GET",
+		async : false,
+		success : function(data) {
+
+
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+
+			alert('データの通信に失敗しました。')
+
+		}
+	});
+
+
+}
+
+
 /**詳細表示**/
 function renderDetails(expense) {
 	$('.error').text('');
 	$('#id').val(expense.id);
 	$('#reportDate').val(expense.reportDate);
 	$('#updateDate').val(expense.updateDate);
+	$('#reportEmpId').val(expense.empId);
 	$('#reportName').val(expense.name);
 	$('#title').val(expense.title);
 	$('#place').val(expense.place);
 	$('#money').val(expense.money);
 	$('#status').val(expense.status);
+	$('#updateEmpId').val(expense.updateEmpId);
 	$('#updateName').val(expense.updateName);
 	$('#reason').val(expense.reason);
 }
@@ -303,9 +350,6 @@ function addExpense() {
 }
 
 
-
-
-$('#login-button').click(login);
 
 /**ログインするファンクション**/
 function login(){
@@ -449,6 +493,37 @@ $('#SeEmpId').click(getEmpIdBySession);
 $('#SeAuthId').click(getAuthIdBySession);
 
 
+/**詳細ボタンで呼び出される**/
+function findById(id) {
+	console.log('findByID start - id:' + id);
+	$.ajax({
+		type : "GET",
+		url : expenseUrl + '/' + id,
+		dataType : "json",
+		success : function(data) {
+			console.log('findById success: ' + data.name);
+			renderDetails(data);
+
+			/**送信不要項目はdisableに**/
+			$('#id').prop('disabled', true);
+			$('#reportDate').prop('disabled', true);
+			$('#updateDate').prop('disabled', false);
+			$('#reportEmpId').prop('disabled', true);
+			$('#reportName').prop('disabled', true);
+			$('#title').prop('disabled', true);
+			$('#place').prop('disabled', true);
+			$('#money').prop('disabled', true);
+			$('#status').prop('disabled', true);
+			$('#updateEmpId').prop('disabled', true);
+			$('#updateName').prop('disabled', true);
+
+		}
+	});
+
+	/**申請ボタン非表示**/
+	$('#addExpense-button').html('');
+}
+
 
 
 /**未着手**/
@@ -456,18 +531,6 @@ $('#SeAuthId').click(getAuthIdBySession);
 
 
 
-function findById(id) {
-	console.log('findByID start - id:' + id);
-	$.ajax({
-		type : "GET",
-		url : rootUrl + '/' + id,
-		dataType : "json",
-		success : function(data) {
-			console.log('findById success: ' + data.name);
-			renderDetails(data)
-		}
-	});
-}
 
 
 

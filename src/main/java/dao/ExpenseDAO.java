@@ -28,9 +28,11 @@ public class ExpenseDAO {
 			+"EXPENSE2(ID, REPORT_DATE, UPDATE_DATE, EMPID, TITLE, MONEY, STATUS_ID, PLACE, UPDATE_EMPID, TEXT) "
 			+"VALUES(?,?,?,?,?,?,?,?,?,?)";
 
+	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " AND EXP.ID = ?";
+
 
 	/**未着手**/
-	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " WHERE EMP.ID = ?";
+
 
 	private static final String UPDATE_QUERY = "UPDATE EMPLOYEE "
 							+"SET EMPID=?,NAME=?,AGE=?,GENDER=?,PHOTOID=?,ZIP=?,PREF=?,"
@@ -185,6 +187,38 @@ public class ExpenseDAO {
 	}
 
 
+	/**
+	 * ID指定の検索を実施する。
+	 *
+	 * @param id 検索対象のID
+	 * @return 検索できた場合は検索結果データを収めたPostインスタンス。検索に失敗した場合はnullが返る。
+	 */
+	public Expense findById(int id) {
+		Expense result = null;
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return result;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_QUERY)) {
+			statement.setInt(1, id);
+
+			ResultSet rs = statement.executeQuery();
+
+			if (rs.next()) {
+				result = processRow(rs);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return result;
+	}
+
+
 
 
 
@@ -193,39 +227,7 @@ public class ExpenseDAO {
 
 
 
-//	/**
-//	 * ID指定の検索を実施する。
-//	 *
-//	 * @param id 検索対象のID
-//	 * @return 検索できた場合は検索結果データを収めたPostインスタンス。検索に失敗した場合はnullが返る。
-//	 */
-//	public Employee findById(int id) {
-//		Employee result = null;
-//
-//		Connection connection = ConnectionProvider.getConnection();
-//		if (connection == null) {
-//			return result;
-//		}
-//
-//		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_ID_QUERY)) {
-//			statement.setInt(1, id);
-//
-//			ResultSet rs = statement.executeQuery();
-//
-//			if (rs.next()) {
-////				result = processRow(rs);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		} finally {
-//			ConnectionProvider.close(connection);
-//		}
-//
-//		return result;
-//	}
-//
-//
-//
+
 
 //	/**
 //	 * 指定されたEmployeeオブジェクトを使ってDBを更新する。

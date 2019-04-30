@@ -113,10 +113,10 @@ public class ExpenseResource {
 			expense.setReportDate(reportDateStr);
 		}
 
-		String updateDateStr = form.getField("updateDate").getValue();
-		if (updateDateStr != null && !updateDateStr.isEmpty()) {
-			expense.setUpdateDate(updateDateStr);
-		}
+//		String updateDateStr = form.getField("updateDate").getValue();
+//		if (updateDateStr != null && !updateDateStr.isEmpty()) {
+//			expense.setUpdateDate(updateDateStr);
+//		}
 		expense.setEmpId(form.getField("reportEmpId").getValue());
 //		expense.setName(form.getField("name").getValue());
 		expense.setTitle(form.getField("title").getValue());
@@ -139,23 +139,23 @@ public class ExpenseResource {
 
 
 
-
-	/**未着手**/
-
-
 	/**
-	 * ID指定で従業員情報を取得する。
+	 * ID指定で経費情報を取得する。
 	 *
-	 * @param id 取得対象の従業員のID
-	 * @return 取得した従業員情報をJSON形式で返す。データが存在しない場合は空のオブジェクトが返る。
+	 * @param id 取得対象の経費の申請ID
+	 * @return 取得した経費情報をJSON形式で返す。データが存在しない場合は空のオブジェクトが返る。
 	 */
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Employee findById(@PathParam("id") int id) {
-		return empDao.findById(id);
+	public Expense findById(@PathParam("id") int id) {
+		return expDao.findById(id);
 	}
 
+
+
+
+	/**未着手**/
 
 
 
