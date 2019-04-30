@@ -239,8 +239,8 @@ public class ExpenseDAO {
 		} finally {
 			ConnectionProvider.close(connection);
 		}
-		
-		
+
+
 
 		return expense;
 	}
@@ -250,8 +250,6 @@ public class ExpenseDAO {
 
 
 	/**以降未着手**/
-
-
 
 
 

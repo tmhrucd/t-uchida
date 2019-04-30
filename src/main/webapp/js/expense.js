@@ -175,7 +175,7 @@ $('#findExpense').click(function() {
 })
 
 
-$('#addExpense').click(function() {
+function checkAddExpense(){
 
 	/**未ログイン**/
 	if($('#reportEmpId').val() == 'ログインしてください'){
@@ -225,14 +225,17 @@ $('#addExpense').click(function() {
 
 	}
 
-
 	return false;
-})
+}
 
 
 /**新規追加ボタンで空に**/
 $('#newExpense').click(function() {
 	renderDetails({});
+	/**入力権限**/
+	detailAbled();
+	detailAddExpense()
+
 
 	//項目自動入力
 	$('#status').val('申請中');
@@ -280,6 +283,9 @@ $('#newExpense').click(function() {
 
 		}
 	})
+
+	deleteButton();
+	$('#addExpense-button').html('<button id="addExpense">申請</button>').attr("onclick", "checkAddExpense()");
 
 });
 
@@ -341,7 +347,7 @@ function addExpense() {
 		success : function(data, textStatus, jqXHR) {
 			alert('申請に成功しました');
 			findAll();
-			renderDetails(data);
+			renderDetails({});
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('申請に失敗しました');
@@ -500,33 +506,72 @@ function findById(id) {
 		type : "GET",
 		url : expenseUrl + '/' + id,
 		dataType : "json",
+		async : false,
 		success : function(data) {
 			console.log('findById success: ' + data.name);
 			renderDetails(data);
 
-			/**送信不要項目はreadonlyに**/
-			$('#id').prop('disabled', true);
-			$('#reportDate').prop('readonly', true);
-			$('#updateDate').prop('readonly', false);
-			$('#reportEmpId').prop('readonly', true);
-			$('#reportName').prop('readonly', true);
-			$('#title').prop('readonly', true);
-			$('#place').prop('readonly', true);
-			$('#money').prop('readonly', true);
-			$('#status').prop('readonly', true);
-			$('#updateEmpId').prop('readonly', true);
-			$('#updateName').prop('readonly', true);
+			/**詳細時の権限**/
+			detailApprove();
 
-			/**承認ボタンにidを**/
-			$('#approve').attr("onclick", "approveExpense("+data.id+')')
-			/**却下ボタンにidを**/
-			$('#reject').attr("onclick", "rejectExpense("+data.id+')')
+			/**一旦ボタン削除**/
+			deleteButton();
+
+			/**申請中**/
+			if(data.statusId === 1){
+
+
+				/**セッションから権限ID確認**/
+				$.ajax({
+					url : rootUrl + '/AuthId',
+					type : "GET",
+					async : false,
+					success : function(auth) {
+
+						/**承認者権限**/
+						if(auth === '1'){
+
+							/**承認ボタンにidを**/
+							$('#approve-button').html('<button id="approve">承認</button>');
+							$('#approve').attr("onclick", "approveExpense("+data.id+')');
+
+							/**却下ボタンにidを**/
+							$('#reject-button').html('<button id="reject">却下</button>');
+							$('#reject').attr("onclick", "rejectExpense("+data.id+')')
+
+						}
+						/**依頼者権限**/
+						else{
+							/**詳細をdisabled**/
+							detailDisabled();
+						}
+
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+
+						alert('データの通信に失敗しました。')
+
+					}
+				})
+
+			}
+			/**承認済or却下**/
+			else if(data.statusId === 2 || data.statusId === 3){
+
+				/**詳細をdisabled**/
+				detailDisabled();
+
+			}
+			else if(data.statusId === 2){
+
+				$('#reason-div').html('');
+
+			}
+
+
 
 		}
 	});
-
-	/**申請ボタン非表示**/
-	$('#addExpense-button').html('');
 }
 
 
@@ -602,6 +647,99 @@ function rejectExpense(id) {
 			alert('却下に失敗しました');
 		}
 	})
+}
+
+/**各種ボタンを消すファンクション**/
+function deleteButton(){
+
+	/**承認ボタンを消す**/
+	$('#approve-button').html('')
+	/**却下ボタンにidを**/
+	$('#reject-button').html('');
+	/**申請ボタンを消す**/
+	$('#addExpense-button').html('');
+
+
+}
+
+/**詳細をすべてdisabledに**/
+function detailDisabled(){
+
+	/**操作不能項目はreadonlyに**/
+	$('#id').prop('disabled', true);
+	$('#reportDate').prop('disabled', true);
+	$('#updateDate').prop('disabled', true);
+	$('#reportEmpId').prop('disabled', true);
+	$('#reportName').prop('disabled', true);
+	$('#title').prop('disabled', true);
+	$('#place').prop('disabled', true);
+	$('#money').prop('disabled', true);
+	$('#updateEmpId').prop('disabled', true);
+	$('#updateName').prop('disabled', true);
+	$('#reason').prop('disabled', true);
+
+
+}
+
+/**詳細をすべてabledに**/
+function detailAbled(){
+
+	/**操作不能項目はreadonlyに**/
+	$('#id').prop('disabled', false).prop('readonly', false);
+	$('#reportDate').prop('disabled', false).prop('readonly', false);
+	$('#updateDate').prop('disabled', false).prop('readonly', false);
+	$('#reportEmpId').prop('disabled', false).prop('readonly', false);
+	$('#reportName').prop('disabled', false).prop('readonly', false);
+	$('#title').prop('disabled', false).prop('readonly', false);
+	$('#place').prop('disabled', false).prop('readonly', false);
+	$('#money').prop('disabled', false).prop('readonly', false);
+	$('#updateEmpId').prop('disabled', false).prop('readonly', false);
+	$('#updateName').prop('disabled', false).prop('readonly', false);
+	$('#reason').prop('disabled', false).prop('readonly', false);
+
+
+}
+
+
+/**承認時**/
+function detailApprove(){
+
+	/**送信不要項目はreadonlyに**/
+	$('#id').prop('disabled', true);
+	$('#reportDate').prop('readonly', true);
+	$('#updateDate').prop('readonly', false);
+	$('#reportEmpId').prop('readonly', true);
+	$('#reportName').prop('readonly', true);
+	$('#title').prop('readonly', true);
+	$('#place').prop('readonly', true);
+	$('#money').prop('readonly', true);
+	$('#status').prop('readonly', true);
+	$('#updateEmpId').prop('readonly', true);
+	$('#updateName').prop('disable', true);
+	$('#reason').prop('readonly',false);
+
+
+}
+
+/**新規追加時**/
+function detailAddExpense(){
+
+	/**送信不要項目はreadonlyに**/
+	$('#id').prop('disabled', true);
+	$('#reportDate').prop('readonly', false);
+	$('#updateDate').prop('readonly', true);
+	$('#reportEmpId').prop('readonly', true);
+	$('#reportName').prop('readonly', true);
+	$('#title').prop('readonly', false);
+	$('#place').prop('readonly', false);
+	$('#money').prop('readonly', false);
+	$('#status').prop('disabled', true);
+	$('#updateEmpId').prop('readonly', true);
+	$('#updateName').prop('disabled', true);
+	$('#reason').prop('readonly', true);
+
+
+
 }
 
 

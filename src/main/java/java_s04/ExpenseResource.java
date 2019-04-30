@@ -111,7 +111,7 @@ public class ExpenseResource {
 		expense.setStatusId(1);
 		expense.setPlace(form.getField("place").getValue());
 		expense.setUpdateEmpId(null);
-		expense.setReason(form.getField("reason").getValue());
+		expense.setReason(null);
 
 
 		if (!expense.isValidObject()) {

@@ -76,23 +76,23 @@
 				<div>
 				<div>
 					<label for="updateEmpId">更新者社員ID:</label>
-            		<input type="text" maxlength="10" name="updateEmpId" id="updateEmpId" readonly>
+            		<input type="text" maxlength="10" name="updateEmpId" id="updateEmpId" disabled>
             	</div>
 					<label for="updateName">更新者:</label>
-					<input type="text" maxlength="40" name="updateName" id="updateName" readonly>
+					<input type="text" maxlength="40" name="updateName" id="updateName" disabled>
 				</div>
 
 
-            	<div>
+            	<div id = "reason-div">
 					<label for="reason">却下理由:</label>
 					<input type="text" maxlength="4000" name="reason" id="reason">
 				</div>
 
 			</form>
 
-			<div><button id="approve">承認</button></div>
-			<div><button id="reject">却下</button></div>
-            <div id = "addExpense-button"><button id="addExpense">申請</button></div>
+			<div id = "approve-button"></div>
+			<div id = "reject-button"></div>
+            <div id = "addExpense-button"></div>
 
 		</div>
 
