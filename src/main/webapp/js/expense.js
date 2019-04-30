@@ -509,6 +509,10 @@ function findById(id) {
 		async : false,
 		success : function(data) {
 			console.log('findById success: ' + data.name);
+
+			/**却下理由**/
+			$('#reason-div').html('<label for="reason">却下理由:</label><input type="text" maxlength="4000" name="reason" id="reason">');
+
 			renderDetails(data);
 
 			/**詳細時の権限**/
@@ -519,9 +523,6 @@ function findById(id) {
 
 			/**申請中**/
 			if(data.statusId === 1){
-
-				/**却下理由**/
-				$('#reason-div').html('<label for="reason">却下理由:</label><input type="text" maxlength="4000" name="reason" id="reason">');
 
 
 				/**セッションから権限ID確認**/
