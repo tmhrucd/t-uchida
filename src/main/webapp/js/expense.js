@@ -504,18 +504,21 @@ function findById(id) {
 			console.log('findById success: ' + data.name);
 			renderDetails(data);
 
-			/**送信不要項目はdisableに**/
+			/**送信不要項目はreadonlyに**/
 			$('#id').prop('disabled', true);
-			$('#reportDate').prop('disabled', true);
-			$('#updateDate').prop('disabled', false);
-			$('#reportEmpId').prop('disabled', true);
-			$('#reportName').prop('disabled', true);
-			$('#title').prop('disabled', true);
-			$('#place').prop('disabled', true);
-			$('#money').prop('disabled', true);
-			$('#status').prop('disabled', true);
-			$('#updateEmpId').prop('disabled', true);
-			$('#updateName').prop('disabled', true);
+			$('#reportDate').prop('readonly', true);
+			$('#updateDate').prop('readonly', false);
+			$('#reportEmpId').prop('readonly', true);
+			$('#reportName').prop('readonly', true);
+			$('#title').prop('readonly', true);
+			$('#place').prop('readonly', true);
+			$('#money').prop('readonly', true);
+			$('#status').prop('readonly', true);
+			$('#updateEmpId').prop('readonly', true);
+			$('#updateName').prop('readonly', true);
+
+			/**承認ボタンにidを**/
+			$('#approve').attr("onclick", "approveExpense("+data.id+')')
 
 		}
 	});
@@ -526,53 +529,40 @@ function findById(id) {
 
 
 
-/**未着手**/
-
-
-
-
-
-
-
-
-
-function updateEmployee(id) {
+/**承認ファンクション**/
+function approveExpense(id) {
 	console.log('updateEmployee start');
 
-	var fd = new FormData(document.getElementById("employeeForm"));
+	$('.error').children().remove();
+
+	if ($('#updateDate').val() === '') {
+		$('.error').append('<div>更新日は必須入力です。</div>');
+	}
+
+	if ($('.error').children().length != 0) {
+		return false;
+	}
+
+
+	var fd = new FormData(document.getElementById("expenseForm"));
 
 	$.ajax({
-		url : rootUrl + '/' + id,
+		url : expenseUrl + '/approve/' + id,
 		type : "PUT",
 		data : fd,
 		contentType : false,
 		processData : false,
 		dataType : "json",
+		async : false ,
 		success : function(data, textStatus, jqXHR) {
-			alert('社員データの更新に成功しました');
+			alert('承認しました');
 			findAll();
 			renderDetails(data);
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
-			alert('社員データの更新に失敗しました');
+			alert('承認に失敗しました');
 		}
 	})
-}
-
-function deleteById(id) {
-	console.log('delete start - id:' + id);
-	$.ajax({
-		type : "DELETE",
-		url : rootUrl + '/' + id,
-		success : function() {
-			alert('社員データの削除に成功しました');
-			findAll();
-			renderDetails({});
-		},
-		error : function(jqXHR, textStatus, errorThrown) {
-			alert('社員データの削除に失敗しました');
-		}
-	});
 }
 
 

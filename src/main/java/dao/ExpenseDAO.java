@@ -30,13 +30,15 @@ public class ExpenseDAO {
 
 	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " AND EXP.ID = ?";
 
+	private static final String APPROVE_QUERY = "UPDATE EXPENSE2 "
+			+"SET ID=?,REPORT_DATE=?,UPDATE_DATE=?,EMPID=?,TITLE=?,MONEY=?,STATUS_ID=?,PLACE=?,UPDATE_EMPID=?,TEXT=? "
+			+" WHERE ID = ?";
+
 
 	/**未着手**/
 
 
-	private static final String UPDATE_QUERY = "UPDATE EMPLOYEE "
-							+"SET EMPID=?,NAME=?,AGE=?,GENDER=?,PHOTOID=?,ZIP=?,PREF=?,"
-							+"ADDRESS=?,POSTID=?,ENTDATE=?,RETDATE=? WHERE ID = ?";
+
 	private static final String DELETE_QUERY = "DELETE FROM EMPLOYEE WHERE ID = ?";
 
 
@@ -135,14 +137,11 @@ public class ExpenseDAO {
 			statement.setDate(count++, null);
 		}
 		statement.setString(count++, expense.getEmpId());
-//		statement.setString(count++, expense.getName());
 		statement.setString(count++, expense.getTitle());
 		statement.setInt(count++, expense.getMoney());
 		statement.setInt(count++, expense.getStatusId());
-//		statement.setString(count++, expense.getStatus());
 		statement.setString(count++, expense.getPlace());
 		statement.setString(count++, expense.getUpdateEmpId());
-//		statement.setString(count++, expense.getUpdateName());
 		statement.setString(count++, expense.getReason());
 
 
@@ -220,6 +219,32 @@ public class ExpenseDAO {
 
 
 
+	/**
+	 * 指定されたExpenseオブジェクトを使ってDBを更新する。
+	 *
+	 * @param expense 更新対象オブジェクト
+	 * @return 更新に成功したらtrue、失敗したらfalse
+	 */
+	public Expense approve(Expense expense) {
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return expense;
+		}
+
+		try (PreparedStatement statement = connection.prepareStatement(APPROVE_QUERY)) {
+			setParameter(statement, expense, true); //このtrueがupload指定
+			statement.executeUpdate();
+		} catch (SQLException ex) {
+			ex.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return expense;
+	}
+
+
+
 
 
 	/**以降未着手**/
@@ -229,29 +254,7 @@ public class ExpenseDAO {
 
 
 
-//	/**
-//	 * 指定されたEmployeeオブジェクトを使ってDBを更新する。
-//	 *
-//	 * @param employee 更新対象オブジェクト
-//	 * @return 更新に成功したらtrue、失敗したらfalse
-//	 */
-//	public Employee update(Employee employee) {
-//		Connection connection = ConnectionProvider.getConnection();
-//		if (connection == null) {
-//			return employee;
-//		}
-//
-//		try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
-//			setParameter(statement, employee, true);
-//			statement.executeUpdate();
-//		} catch (SQLException ex) {
-//			ex.printStackTrace();
-//		} finally {
-//			ConnectionProvider.close(connection);
-//		}
-//
-//		return employee;
-//	}
+
 //
 //	/**
 //	 * 指定されたIDのPostデータを削除する。
