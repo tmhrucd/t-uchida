@@ -512,13 +512,16 @@ function findById(id) {
 			renderDetails(data);
 
 			/**詳細時の権限**/
-			detailApprove();
+			detailAbled();
 
 			/**一旦ボタン削除**/
 			deleteButton();
 
 			/**申請中**/
 			if(data.statusId === 1){
+
+				/**却下理由**/
+				$('#reason-div').html('<label for="reason">却下理由:</label><input type="text" maxlength="4000" name="reason" id="reason">');
 
 
 				/**セッションから権限ID確認**/
@@ -530,6 +533,8 @@ function findById(id) {
 
 						/**承認者権限**/
 						if(auth === '1'){
+
+							detailApprove();
 
 							/**承認ボタンにidを**/
 							$('#approve-button').html('<button id="approve">承認</button>');
@@ -561,14 +566,10 @@ function findById(id) {
 				/**詳細をdisabled**/
 				detailDisabled();
 
-			}
-			else if(data.statusId === 2){
-
-				$('#reason-div').html('');
+				if(data.statusId === 2)
+					$('#reason-div').html('');
 
 			}
-
-
 
 		}
 	});
@@ -605,12 +606,15 @@ function approveExpense(id) {
 			alert('申請を承認しました');
 			findAll();
 			renderDetails(data);
+
+			deleteButton();
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('承認に失敗しました');
 		}
 	})
 }
+
 
 /**却下ファンクション**/
 function rejectExpense(id) {
@@ -642,12 +646,17 @@ function rejectExpense(id) {
 			alert('申請を却下しました');
 			findAll();
 			renderDetails(data);
+
+			deleteButton();
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('却下に失敗しました');
 		}
 	})
 }
+
+
+
 
 /**各種ボタンを消すファンクション**/
 function deleteButton(){
@@ -661,6 +670,7 @@ function deleteButton(){
 
 
 }
+
 
 /**詳細をすべてdisabledに**/
 function detailDisabled(){
@@ -681,7 +691,8 @@ function detailDisabled(){
 
 }
 
-/**詳細をすべてabledに**/
+
+/**詳細を全て編集可能に**/
 function detailAbled(){
 
 	/**操作不能項目はreadonlyに**/
@@ -701,7 +712,7 @@ function detailAbled(){
 }
 
 
-/**承認時**/
+/**承認・却下時**/
 function detailApprove(){
 
 	/**送信不要項目はreadonlyに**/
@@ -713,13 +724,14 @@ function detailApprove(){
 	$('#title').prop('readonly', true);
 	$('#place').prop('readonly', true);
 	$('#money').prop('readonly', true);
-	$('#status').prop('readonly', true);
+	$('#status').prop('disabled', true);
 	$('#updateEmpId').prop('readonly', true);
-	$('#updateName').prop('disable', true);
+	$('#updateName').prop('disabled', true);
 	$('#reason').prop('readonly',false);
 
 
 }
+
 
 /**新規追加時**/
 function detailAddExpense(){
@@ -737,8 +749,6 @@ function detailAddExpense(){
 	$('#updateEmpId').prop('readonly', true);
 	$('#updateName').prop('disabled', true);
 	$('#reason').prop('readonly', true);
-
-
 
 }
 
