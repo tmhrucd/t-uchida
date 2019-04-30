@@ -5,8 +5,9 @@ th {
 }
 
 #list {
+	font-size: 80%;
 	float: left;
-	width: 60%;
+	width: 50%;
 }
 
 #detail {
@@ -16,7 +17,7 @@ th {
 
 #login {
 	float: left;
-	width: 15%;
+	width: 25%;
 }
 
 #insertBlock {

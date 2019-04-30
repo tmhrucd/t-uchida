@@ -152,6 +152,32 @@ public class EmployeeDAO {
 		return Auth;
 	}
 
+	/**社員IDから名前を返す**/
+	public String getNameByEmpId(String empId){
+
+		String Name = "";
+
+		Connection connection = ConnectionProvider.getConnection();
+		if (connection == null) {
+			return Name;
+		}
+		try (PreparedStatement statement = connection.prepareStatement(SELECT_BY_EMPID_QUERY)) {
+			statement.setString(1, empId);
+
+			ResultSet rs = statement.executeQuery();
+
+			rs.next();
+			Name = rs.getString("NAME");
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			ConnectionProvider.close(connection);
+		}
+
+		return Name;
+	}
+
 
 
 	/**

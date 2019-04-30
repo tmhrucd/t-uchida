@@ -149,18 +149,22 @@ public class ExpenseResource {
 	@Path("approve/{id}")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Expense update(@Context HttpServletRequest request , @Context HttpServletResponse response,@PathParam("id") int id,
+	public Expense approve(@Context HttpServletRequest request , @Context HttpServletResponse response,@PathParam("id") int id,
 			final FormDataMultiPart form) throws WebApplicationException {
 
 		/**セッション取得**/
 		HttpSession session = request.getSession(false);
-		String EmpId= "";
+		String updateEmpId= "";
+		String updateEmpName = "";
 
 		if(session != null){
 
-			 EmpId = (String)session.getAttribute("empId");
+			 updateEmpId = (String)session.getAttribute("empId");
 
 		}
+
+
+		updateEmpName = empDao.getNameByEmpId(updateEmpId);
 
 		Expense expense = new Expense();
 
@@ -175,11 +179,14 @@ public class ExpenseResource {
 			expense.setUpdateDate(updateDateStr);
 		}
 		expense.setEmpId(form.getField("reportEmpId").getValue());
+		expense.setName(form.getField("reportName").getValue());
 		expense.setTitle(form.getField("title").getValue());
 		expense.setMoney(Integer.parseInt(form.getField("money").getValue()));
-		expense.setStatusId(1);
+		expense.setStatusId(2); /**承認**/
+		expense.setStatus("承認済");
 		expense.setPlace(form.getField("place").getValue());
-		expense.setUpdateEmpId(EmpId);
+		expense.setUpdateEmpId(updateEmpId);
+		expense.setUpdateName(updateEmpName);
 		expense.setReason(form.getField("reason").getValue());
 
 
@@ -187,8 +194,67 @@ public class ExpenseResource {
 			throw new WebApplicationException(Response.Status.BAD_REQUEST);
 		}
 
-		return expDao.approve(expense);
+		return expDao.update(expense);
 	}
+
+
+	/**
+	 * 承認でDBを更新する。
+	 *
+	 * @param form 更新情報を含めた経費情報
+	 * @throws WebApplicationException 入力データチェックに失敗した場合に送出される。
+	 */
+	@PUT
+	@Path("reject/{id}")
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Expense reject(@Context HttpServletRequest request , @Context HttpServletResponse response,@PathParam("id") int id,
+			final FormDataMultiPart form) throws WebApplicationException {
+
+		/**セッション取得**/
+		HttpSession session = request.getSession(false);
+		String updateEmpId= "";
+		String updateEmpName= "";
+
+		if(session != null){
+
+			 updateEmpId = (String)session.getAttribute("empId");
+
+		}
+
+		updateEmpName = empDao.getNameByEmpId(updateEmpId);
+
+		Expense expense = new Expense();
+
+		expense.setId(id);
+		String reportDateStr = form.getField("reportDate").getValue();
+		if (reportDateStr != null && !reportDateStr.isEmpty()) {
+			expense.setReportDate(reportDateStr);
+		}
+
+		String updateDateStr = form.getField("updateDate").getValue();
+		if (updateDateStr != null && !updateDateStr.isEmpty()) {
+			expense.setUpdateDate(updateDateStr);
+		}
+		expense.setEmpId(form.getField("reportEmpId").getValue());
+		expense.setName(form.getField("reportName").getValue());
+		expense.setTitle(form.getField("title").getValue());
+		expense.setMoney(Integer.parseInt(form.getField("money").getValue()));
+		expense.setStatusId(3);   /**却下**/
+		expense.setStatus("却下");
+		expense.setPlace(form.getField("place").getValue());
+		expense.setUpdateEmpId(updateEmpId);
+		expense.setUpdateName(updateEmpName);
+		expense.setReason(form.getField("reason").getValue());
+
+
+		if (!expense.isValidObject()) {
+			throw new WebApplicationException(Response.Status.BAD_REQUEST);
+		}
+
+		return expDao.update(expense);
+	}
+
 
 
 	/**未着手**/

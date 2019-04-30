@@ -519,6 +519,8 @@ function findById(id) {
 
 			/**承認ボタンにidを**/
 			$('#approve').attr("onclick", "approveExpense("+data.id+')')
+			/**却下ボタンにidを**/
+			$('#reject').attr("onclick", "rejectExpense("+data.id+')')
 
 		}
 	});
@@ -555,12 +557,49 @@ function approveExpense(id) {
 		dataType : "json",
 		async : false ,
 		success : function(data, textStatus, jqXHR) {
-			alert('承認しました');
+			alert('申請を承認しました');
 			findAll();
 			renderDetails(data);
 		},
 		error : function(jqXHR, textStatus, errorThrown) {
 			alert('承認に失敗しました');
+		}
+	})
+}
+
+/**却下ファンクション**/
+function rejectExpense(id) {
+	console.log('rejectEmployee start');
+
+	$('.error').children().remove();
+
+	if ($('#updateDate').val() === '') {
+		$('.error').append('<div>更新日は必須入力です。</div>');
+	}
+	if ($('#reason').val() === '') {
+		$('.error').append('<div>却下理由は必須入力です。</div>');
+	}
+	if ($('.error').children().length != 0) {
+		return false;
+	}
+
+	var fd = new FormData(document.getElementById("expenseForm"));
+
+	$.ajax({
+		url : expenseUrl + '/reject/' + id,
+		type : "PUT",
+		data : fd,
+		contentType : false,
+		processData : false,
+		dataType : "json",
+		async : false ,
+		success : function(data, textStatus, jqXHR) {
+			alert('申請を却下しました');
+			findAll();
+			renderDetails(data);
+		},
+		error : function(jqXHR, textStatus, errorThrown) {
+			alert('却下に失敗しました');
 		}
 	})
 }

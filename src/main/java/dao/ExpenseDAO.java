@@ -30,7 +30,7 @@ public class ExpenseDAO {
 
 	private static final String SELECT_BY_ID_QUERY = SELECT_ALL_QUERY + " AND EXP.ID = ?";
 
-	private static final String APPROVE_QUERY = "UPDATE EXPENSE2 "
+	private static final String UPDATE_QUERY = "UPDATE EXPENSE2 "
 			+"SET ID=?,REPORT_DATE=?,UPDATE_DATE=?,EMPID=?,TITLE=?,MONEY=?,STATUS_ID=?,PLACE=?,UPDATE_EMPID=?,TEXT=? "
 			+" WHERE ID = ?";
 
@@ -225,13 +225,13 @@ public class ExpenseDAO {
 	 * @param expense 更新対象オブジェクト
 	 * @return 更新に成功したらtrue、失敗したらfalse
 	 */
-	public Expense approve(Expense expense) {
+	public Expense update(Expense expense) {
 		Connection connection = ConnectionProvider.getConnection();
 		if (connection == null) {
 			return expense;
 		}
 
-		try (PreparedStatement statement = connection.prepareStatement(APPROVE_QUERY)) {
+		try (PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY)) {
 			setParameter(statement, expense, true); //このtrueがupload指定
 			statement.executeUpdate();
 		} catch (SQLException ex) {
@@ -239,6 +239,8 @@ public class ExpenseDAO {
 		} finally {
 			ConnectionProvider.close(connection);
 		}
+		
+		
 
 		return expense;
 	}
