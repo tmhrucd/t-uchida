@@ -22,6 +22,28 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-dependency-plugin</artifactId>
+                  <executions>
+                           <execution>
+                                    <phase>package</phase>
+                                    <goals>
+                                             <goal>copy</goal>
+                                    </goals>
+                                    <configuration>
+                                             <artifactItems>
+                                                      <artifactItem>
+                                                               <groupId>com.github.jsimone</groupId>
+                                                               <artifactId>webapp-runner</artifactId>
+                                                               <version>9.0.19.0</version>
+                                                               <destFileName>webapp-runner.jar</destFileName>
+                                                      </artifactItem>
+                                             </artifactItems>
+                                    </configuration>
+                           </execution>
+                  </executions>
+         </plugin>
         </plugins>
     </build>
 
@@ -61,27 +83,6 @@
         <jersey.version>2.28</jersey.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-         <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-dependency-plugin</artifactId>
-                  <executions>
-                           <execution>
-                                    <phase>package</phase>
-                                    <goals>
-                                             <goal>copy</goal>
-                                    </goals>
-                                    <configuration>
-                                             <artifactItems>
-                                                      <artifactItem>
-                                                               <groupId>com.github.jsimone</groupId>
-                                                               <artifactId>webapp-runner</artifactId>
-                                                               <version>9.0.19.0</version>
-                                                               <destFileName>webapp-runner.jar</destFileName>
-                                                      </artifactItem>
-                                             </artifactItems>
-                                    </configuration>
-                           </execution>
-                  </executions>
-         </plugin>
+         
 
 </project>
